@@ -21,6 +21,7 @@ namespace fs = std::filesystem;
 template<typename T = int>
 class CCuttingTask
 {
+    static_assert(std::is_arithmetic<T>::value, "The template parameter for CuttingTask should be an arithmetic type!");
 public:
     explicit CCuttingTask(IAlgorithm<T>*);
     void SetTasksPath(const std::string& sPath);
