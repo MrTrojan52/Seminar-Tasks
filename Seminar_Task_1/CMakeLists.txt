@@ -4,8 +4,8 @@ project(SpecSem_Lab1)
 set(CMAKE_CXX_STANDARD 17)
 
 
-set(SOURCES main.cpp GreedyAlgorithm.cpp CuttingTask.cpp)
-set(HEADERS IAlgorithm.h GreedyAlgorithm.h CuttingTask.h)
+set(SOURCES main.cpp)
+set(HEADERS IAlgorithm.h GreedyAlgorithm.h CuttingTask.h Definitions.h)
 
 
 add_executable(SpecSem_Lab1 ${HEADERS} ${SOURCES})

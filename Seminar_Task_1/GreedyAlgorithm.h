@@ -7,7 +7,8 @@
 
 #include "IAlgorithm.h"
 
-class GreedyAlgorithm : public IAlgorithm
+template<typename T>
+class GreedyAlgorithm : public IAlgorithm<T>
 {
 
 };

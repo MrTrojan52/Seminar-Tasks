@@ -5,6 +5,7 @@
 #ifndef SPECSEM_LAB1_IALGORITHM_H
 #define SPECSEM_LAB1_IALGORITHM_H
 
+template<typename T>
 class IAlgorithm
 {
 
