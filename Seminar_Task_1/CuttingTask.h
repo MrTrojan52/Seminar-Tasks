@@ -8,9 +8,9 @@
 #include <memory>
 #include <filesystem>
 #include <algorithm>
-#include <iostream>
 #include <fstream>
 #include <exception>
+#include <iterator>
 
 #include "Definitions.h"
 #include "IAlgorithm.h"
@@ -29,6 +29,7 @@ public:
 
 private:
     void PopulateTaskFromFile(const std::string& sFilePath);
+    void ClearTaskData();
     [[nodiscard]] std::vector<std::string> ExtractFilesFromPath() const;
     IAlgorithm<T>* m_pAlgorithm;
     std::string m_sTasksPath;
@@ -110,25 +111,23 @@ std::vector<std::string> CCuttingTask<T>::ExtractFilesFromPath() const
 }
 
 template<typename T>
+void CCuttingTask<T>::ClearTaskData()
+{
+    m_nRodLength = 0;
+    m_vLenghts.clear();
+}
+
+template<typename T>
 void CCuttingTask<T>::PopulateTaskFromFile(const std::string& sFilePath)
 {
+    // Clear previously populated data
+    ClearTaskData();
     std::ifstream iFile(sFilePath);
     if (iFile.is_open())
     {
-        bool bFirstNumber = true;
-        T length;
-        while (iFile >> length)
-        {
-            if (bFirstNumber)
-            {
-                m_nRodLength = length;
-                bFirstNumber = false;
-            }
-            else
-            {
-                m_vLenghts.push_back(length);
-            }
-        }
+        // The first number in a file is a Rod Length
+        iFile >> m_nRodLength;
+        std::copy(std::istream_iterator<T>(iFile), {}, std::back_inserter(m_vLenghts));
         m_vLenghts.shrink_to_fit();
     }
     else
