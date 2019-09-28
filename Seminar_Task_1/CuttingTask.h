@@ -11,9 +11,12 @@
 #include <fstream>
 #include <exception>
 #include <iterator>
+#include <numeric>
 
 #include "Definitions.h"
 #include "IAlgorithm.h"
+#include "DefaultFactory.h"
+#include "BaseAlgorithmData.h"
 
 namespace fs = std::filesystem;
 
@@ -23,14 +26,17 @@ class CCuttingTask
 {
     static_assert(std::is_arithmetic<T>::value, "The template parameter for CuttingTask should be an arithmetic type!");
 public:
-    explicit CCuttingTask(IAlgorithm<T>*);
+    explicit CCuttingTask(etAlgorithm eAlgorithm);
     void SetTasksPath(const std::string& sPath);
     virtual void Solve();
+    [[nodiscard]] int GetLowerBound() const;
 
 private:
+    IAlgorithmData<T>* GetAlgorithmData();
     void PopulateTaskFromFile(const std::string& sFilePath);
     void ClearTaskData();
     [[nodiscard]] std::vector<std::string> ExtractFilesFromPath() const;
+    etAlgorithm m_eAlgorithm;
     IAlgorithm<T>* m_pAlgorithm;
     std::string m_sTasksPath;
     std::vector<T> m_vLenghts;
@@ -38,10 +44,11 @@ private:
 };
 
 template<typename T>
-CCuttingTask<T>::CCuttingTask(IAlgorithm<T>* pAlgorithm)
-: m_nRodLength(0)
+CCuttingTask<T>::CCuttingTask(etAlgorithm eAlgorithm)
+: m_nRodLength(0),
+  m_eAlgorithm(eAlgorithm)
 {
-    m_pAlgorithm = pAlgorithm;
+    m_pAlgorithm = DefaultFactory<T>::getAlgorithmByEnum(m_eAlgorithm);
 }
 
 template<typename T>
@@ -62,6 +69,7 @@ void CCuttingTask<T>::Solve()
     for (auto& file : vFiles)
     {
         PopulateTaskFromFile(file);
+        m_pAlgorithm->GetSolution(GetAlgorithmData());
     }
     // TODO: Realize solving
 
@@ -134,9 +142,32 @@ void CCuttingTask<T>::PopulateTaskFromFile(const std::string& sFilePath)
     {
         throw std::logic_error("Cannot open the file!");
     }
-
 }
 
+template<typename T>
+int CCuttingTask<T>::GetLowerBound() const
+{
+    auto sum = std::accumulate(m_vLenghts.begin(), m_vLenghts.end(), T());
+    int relation = static_cast<int>(sum / m_nRodLength);
+    return (sum % m_nRodLength > 0 ? relation + 1 : relation);
+}
+
+template<typename T>
+IAlgorithmData<T>* CCuttingTask<T>::GetAlgorithmData()
+{
+    IAlgorithmData<T>* pAlgorithmData = nullptr;
+    switch(m_eAlgorithm)
+    {
+        case eALGORITHM_GREEDY:
+            pAlgorithmData = new BaseAlgorithmData<T>;
+            pAlgorithmData->SetDataByAttribute(ATTR_ROD_LENGTH, m_nRodLength);
+            pAlgorithmData->SetDataByAttribute(ATTR_LENGHTS_ARRAY, m_vLenghts);
+            break;
+        default:
+            break;
+    }
+    return pAlgorithmData;
+}
 
 
 #endif //SPECSEM_LAB1_CCUTTINGTASK_H

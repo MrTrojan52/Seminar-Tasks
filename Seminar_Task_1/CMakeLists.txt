@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 
 set(SOURCES main.cpp)
-set(HEADERS IAlgorithm.h GreedyAlgorithm.h CuttingTask.h Definitions.h)
+set(HEADERS IAlgorithm.h GreedyAlgorithm.h CuttingTask.h Definitions.h DefaultFactory.h IAlgorithmData.h BaseAlgorithmData.h)
 
 
 add_executable(SpecSem_Lab1 ${HEADERS} ${SOURCES})
