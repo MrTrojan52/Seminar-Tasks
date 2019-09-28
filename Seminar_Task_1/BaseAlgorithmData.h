@@ -28,7 +28,7 @@ std::variant<T, std::vector<T> > BaseAlgorithmData<T>::GetDataByAttribute(std::s
     }
     else
     {
-        vReturn = -1;
+        throw std::invalid_argument("Undefined attribute name: " + sAttribute);
     }
     return vReturn;
 }

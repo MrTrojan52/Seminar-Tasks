@@ -17,7 +17,13 @@ enum etAlgorithm
     eALGORITHM_GREEDY = 0
 };
 
-
+enum etStrategy
+{
+    eSTRATEGY_AS_IS = -1,
+    eSTRATEGY_BASIC,
+    eSTRATEGY_CUSTOM_SORTING,
+    eSTRATEGY_CUSTOM_BRUTEFORCE
+};
 
 
 #endif //SPECSEM_LAB1_DEFINITIONS_H

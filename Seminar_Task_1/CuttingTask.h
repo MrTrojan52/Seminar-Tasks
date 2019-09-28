@@ -26,29 +26,36 @@ class CCuttingTask
 {
     static_assert(std::is_arithmetic<T>::value, "The template parameter for CuttingTask should be an arithmetic type!");
 public:
-    explicit CCuttingTask(etAlgorithm eAlgorithm);
+    explicit CCuttingTask(etAlgorithm eAlgorithm, etStrategy = eSTRATEGY_AS_IS);
     void SetTasksPath(const std::string& sPath);
     virtual void Solve();
     [[nodiscard]] int GetLowerBound() const;
 
 private:
-    IAlgorithmData<T>* GetAlgorithmData();
+    IAlgorithmData<T>* GetAlgorithmData(std::vector<T>& vLenghts);
     void PopulateTaskFromFile(const std::string& sFilePath);
     void ClearTaskData();
+    int CalcCrit(const std::vector<int>& vSolution) const;
     [[nodiscard]] std::vector<std::string> ExtractFilesFromPath() const;
     etAlgorithm m_eAlgorithm;
+    etStrategy m_eStrategy;
     IAlgorithm<T>* m_pAlgorithm;
+    IStrategy<T>* m_pStrategy;
     std::string m_sTasksPath;
     std::vector<T> m_vLenghts;
+    std::vector<int> m_vSolution;
     T m_nRodLength;
 };
 
 template<typename T>
-CCuttingTask<T>::CCuttingTask(etAlgorithm eAlgorithm)
+CCuttingTask<T>::CCuttingTask(etAlgorithm eAlgorithm, etStrategy eStrategy)
 : m_nRodLength(0),
-  m_eAlgorithm(eAlgorithm)
+  m_eAlgorithm(eAlgorithm),
+  m_eStrategy(eStrategy)
+
 {
-    m_pAlgorithm = DefaultFactory<T>::getAlgorithmByEnum(m_eAlgorithm);
+    m_pAlgorithm = DefaultFactory<T>::GetAlgorithmByEnum(m_eAlgorithm);
+    m_pStrategy = DefaultFactory<T>::GetStrategyByEnum(m_eStrategy);
 }
 
 template<typename T>
@@ -69,7 +76,25 @@ void CCuttingTask<T>::Solve()
     for (auto& file : vFiles)
     {
         PopulateTaskFromFile(file);
-        m_pAlgorithm->GetSolution(GetAlgorithmData());
+        if (m_eStrategy == eSTRATEGY_AS_IS)
+        {
+            m_vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(m_vLenghts));
+            continue;
+        }
+        
+        std::vector<std::vector<T> > vvUpdatedLenghts = m_pStrategy->GetUpdatedLengths(m_vLenghts);
+        int nMinCrit = m_vLenghts.size() + 1;
+        for (auto vLenghts : vvUpdatedLenghts)
+        {
+            std::vector<int> vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(vLenghts));
+            int nCurrentCrit = CalcCrit(vSolution);
+            if (nCurrentCrit < nMinCrit)
+            {
+                nMinCrit = nCurrentCrit;
+                m_vSolution = vSolution;
+            }
+        }
+
     }
     // TODO: Realize solving
 
@@ -153,7 +178,7 @@ int CCuttingTask<T>::GetLowerBound() const
 }
 
 template<typename T>
-IAlgorithmData<T>* CCuttingTask<T>::GetAlgorithmData()
+IAlgorithmData<T>* CCuttingTask<T>::GetAlgorithmData(std::vector<T>& vLengths)
 {
     IAlgorithmData<T>* pAlgorithmData = nullptr;
     switch(m_eAlgorithm)
@@ -161,12 +186,25 @@ IAlgorithmData<T>* CCuttingTask<T>::GetAlgorithmData()
         case eALGORITHM_GREEDY:
             pAlgorithmData = new BaseAlgorithmData<T>;
             pAlgorithmData->SetDataByAttribute(ATTR_ROD_LENGTH, m_nRodLength);
-            pAlgorithmData->SetDataByAttribute(ATTR_LENGHTS_ARRAY, m_vLenghts);
+            if (vLengths.empty())
+            {
+                pAlgorithmData->SetDataByAttribute(ATTR_LENGHTS_ARRAY, m_vLenghts);
+            }
+            else
+            {
+                pAlgorithmData->SetDataByAttribute(ATTR_LENGHTS_ARRAY, vLengths);
+            }
             break;
         default:
             break;
     }
     return pAlgorithmData;
+}
+
+template<typename T>
+int CCuttingTask<T>::CalcCrit(const std::vector<int>& vSolution) const
+{
+    return *std::max_element(vSolution.begin(), vSolution.end()) + 1;
 }
 
 

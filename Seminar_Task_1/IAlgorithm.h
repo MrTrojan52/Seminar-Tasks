@@ -7,10 +7,10 @@
 #include <vector>
 #include "IAlgorithmData.h"
 
-template<typename T>
+template<typename AlgDataType, typename SolutionType = std::vector<int>>
 class IAlgorithm
 {
 public:
-    virtual std::vector<T> GetSolution(IAlgorithmData<T>* data) = 0;
+    virtual SolutionType GetSolution(IAlgorithmData<AlgDataType>* data) = 0;
 };
 #endif //SPECSEM_LAB1_IALGORITHM_H

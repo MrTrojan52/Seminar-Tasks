@@ -6,6 +6,8 @@
 #define SPECSEM_LAB1_DEFAULTFACTORY_H
 
 #include "IAlgorithm.h"
+#include "IStrategy.h"
+#include "BasicStrategy.h"
 #include "GreedyAlgorithm.h"
 #include "Definitions.h"
 
@@ -13,11 +15,12 @@ template<typename T>
 class DefaultFactory
 {
     public:
-        static IAlgorithm<T>* getAlgorithmByEnum(etAlgorithm eAlgorithm);
+        [[nodiscard]] static IAlgorithm<T>* GetAlgorithmByEnum(etAlgorithm eAlgorithm);
+        [[nodiscard]] static IStrategy<T>* GetStrategyByEnum(etStrategy eStrategy);
 };
 
 template<typename T>
-IAlgorithm<T>* DefaultFactory<T>::getAlgorithmByEnum(etAlgorithm eAlgorithm)
+IAlgorithm<T>* DefaultFactory<T>::GetAlgorithmByEnum(etAlgorithm eAlgorithm)
 {
     IAlgorithm<T>* pAlgorithm = nullptr;
     switch(eAlgorithm)
@@ -29,6 +32,28 @@ IAlgorithm<T>* DefaultFactory<T>::getAlgorithmByEnum(etAlgorithm eAlgorithm)
             break;
     }
     return pAlgorithm;
+}
+
+template<typename T>
+IStrategy<T>* DefaultFactory<T>::GetStrategyByEnum(etStrategy eStrategy)
+{
+    IStrategy<T>* pStrategy = nullptr;
+    switch(eStrategy)
+    {
+        case eSTRATEGY_BASIC:
+            pStrategy = new BasicStrategy<T>;
+            break;
+        case eSTRATEGY_CUSTOM_SORTING:
+            //TODO: return First strategy
+            break;
+        case eSTRATEGY_CUSTOM_BRUTEFORCE:
+            // TODO: return Second strategy
+            break;
+        case eSTRATEGY_AS_IS:
+        default:
+            break;
+    }
+    return pStrategy;
 }
 
 
