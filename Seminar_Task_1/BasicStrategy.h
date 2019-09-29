@@ -8,19 +8,35 @@
 #include <algorithm>
 #include <functional>
 
-#include "IStrategy.h"
+#include "AStrategy.h"
 
 template<typename T>
-class BasicStrategy : public IStrategy<T>
+class BasicStrategy : public AStrategy<T>
 {
     public:
-        std::vector<std::vector<T> > GetUpdatedLengths(std::vector<T> vLenghts) override;
+        void SetLengths(std::vector<T> vLengths)  override;
+        std::vector<T> GetNextLengths() override;
 };
 
 template<typename T>
-std::vector<std::vector<T> > BasicStrategy<T>::GetUpdatedLengths(std::vector<T> vLenghts) {
-    std::sort(vLenghts.begin(), vLenghts.end(), std::greater<T>());
-    return { vLenghts };
+void BasicStrategy<T>::SetLengths(std::vector<T> vLengths)
+{
+    this->m_vPermutation = std::move(vLengths);
+    std::sort(this->m_vPermutation.begin(), this->m_vPermutation.end(), std::greater<T>());
+}
+
+template<typename T>
+std::vector<T> BasicStrategy<T>::GetNextLengths()
+{
+    if (!this->IsDone() && !this->m_vPermutation.empty())
+    {
+        this->SetIsDone(true);
+        return this->m_vPermutation;
+    }
+    else
+    {
+        return std::vector<T>();
+    }
 }
 
 

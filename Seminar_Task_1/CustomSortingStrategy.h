@@ -5,18 +5,18 @@
 #ifndef SPECSEM_LAB1_CUSTOMSORTINGSTRATEGY_H
 #define SPECSEM_LAB1_CUSTOMSORTINGSTRATEGY_H
 
-#include "IStrategy.h"
+#include "AStrategy.h"
 
 template<typename T>
-class CustomSortingStrategy : public IStrategy<T>
+class CustomSortingStrategy : public AStrategy<T>
 {
     public:
-        std::vector<std::vector<T> > GetUpdatedLengths(std::vector<T> vLenghts) override;
+        void SetLengths(std::vector<T> vLenghts) override;
 };
 
 template<typename T>
-std::vector<std::vector<T>> CustomSortingStrategy<T>::GetUpdatedLengths(std::vector<T> vLenghts) {
-    return std::vector<std::vector<T>>();
+void CustomSortingStrategy<T>::SetLengths(std::vector<T> vLenghts) {
+    this->SetIsDone(true);
 }
 
 #endif //SPECSEM_LAB1_CUSTOMSORTINGSTRATEGY_H

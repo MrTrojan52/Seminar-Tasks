@@ -238,17 +238,24 @@ void CCuttingTask<T>::FindSolution(etStrategy eStrategy)
         m_vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(m_vLenghts));
         return;
     }
-    IStrategy<T>* pOldStrategy;
+    IStrategy<T>* pOldStrategy = nullptr;
     if (CurrentStrategy != m_eStrategy)
     {
         pOldStrategy = m_pStrategy;
         m_pStrategy = DefaultFactory<T>::GetStrategyByEnum(CurrentStrategy);
     }
-    std::vector<std::vector<T> > vvUpdatedLenghts = m_pStrategy->GetUpdatedLengths(m_vLenghts);
+
+    m_pStrategy->SetLengths(m_vLenghts);
     int nMinCrit = m_vLenghts.size() + 1;
-    for (auto vLenghts : vvUpdatedLenghts)
+    int k = 0;
+    while (!m_pStrategy->IsDone())
     {
-        std::vector<int> vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(vLenghts));
+        if (CurrentStrategy == eSTRATEGY_CUSTOM_BRUTEFORCE)
+        {
+            ++k;
+        }
+        std::vector<T> vCurrentLengths = std::move(m_pStrategy->GetNextLengths());
+        std::vector<int> vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(vCurrentLengths));
         int nCurrentCrit = CalcCrit(vSolution);
         if (nCurrentCrit < nMinCrit)
         {
@@ -256,6 +263,7 @@ void CCuttingTask<T>::FindSolution(etStrategy eStrategy)
             m_vSolution = vSolution;
         }
     }
+    std::cout << k << std::endl;
     if (CurrentStrategy != m_eStrategy)
     {
         if (pOldStrategy)

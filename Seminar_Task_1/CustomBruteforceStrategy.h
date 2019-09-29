@@ -8,17 +8,19 @@
 #include <stdexcept>
 #include <algorithm>
 #include <iterator>
-#include "IStrategy.h"
+#include "AStrategy.h"
 
 template<typename T>
-class CustomBruteforceStrategy : public IStrategy<T>
+class CustomBruteforceStrategy : public AStrategy<T>
 {
     public:
         explicit CustomBruteforceStrategy(size_t nW);
-        std::vector<std::vector<T> > GetUpdatedLengths(std::vector<T> vLenghts) override;
+        void SetLengths(std::vector<T> vLengths)  override;
+        std::vector<T> GetNextLengths() override;
 
     private:
         size_t m_nW;
+        std::vector<T> m_vLengths;
 };
 
 template<typename T>
@@ -35,33 +37,53 @@ CustomBruteforceStrategy<T>::CustomBruteforceStrategy(size_t nW)
 }
 
 template<typename T>
-std::vector<std::vector<T>> CustomBruteforceStrategy<T>::GetUpdatedLengths(std::vector<T> vLengths) {
-    std::vector<std::vector<T>> vvRetLengths;
-    std::vector<int> vPermutation(vLengths.size());
-    std::iota(vPermutation.begin(), vPermutation.end(), 0);
+void CustomBruteforceStrategy<T>::SetLengths(std::vector<T> vLengths)
+{
+    this->m_vPermutation.clear();
+    this->m_vPermutation.resize(vLengths.size());
+    std::iota(this->m_vPermutation.begin(), this->m_vPermutation.end(), 0);
 
-    size_t k = (m_nW * vLengths.size()) / 100;
-
-
-    std::sort(vPermutation.begin(), vPermutation.end(), [&vLengths](T& l, T& r)
+    std::sort(this->m_vPermutation.begin(), this->m_vPermutation.end(), [&vLengths](T& l, T& r)
     {
         return vLengths[l] > vLengths[r];
     });
-    auto aLastElement = std::next(vPermutation.begin(), k);
+    size_t k = (m_nW * this->m_vPermutation.size()) / 100;
+    auto aLastElement = std::next(this->m_vPermutation.begin(), k);
 
-    if (k < vLengths.size())
+    // This sorting is needed for std::next_permutation
+    // because it works with lexicographically ordered sequences
+    std::sort(aLastElement, this->m_vPermutation.end());
+
+    m_vLengths = std::move(vLengths);
+}
+
+template<typename T>
+std::vector<T> CustomBruteforceStrategy<T>::GetNextLengths()
+{
+    std::vector<T> vRet;
+    if (!this->IsDone() && !this->m_vPermutation.empty())
     {
-        while(std::next_permutation(aLastElement, vPermutation.end()))
+        size_t k = (m_nW * this->m_vPermutation.size()) / 100;
+        auto aLastElement = std::next(this->m_vPermutation.begin(), k);
+        vRet = this->m_vPermutation;
+        if (k < this->m_vPermutation.size())
         {
-            std::vector<T> vRes(vLengths.size());
-            for (size_t i = 0; i < vRes.size(); ++i)
-            {
-                vRes[i] = vLengths[vPermutation[i]];
-            }
-            vvRetLengths.push_back(vRes);
+            this->SetIsDone(!std::next_permutation(aLastElement, this->m_vPermutation.end()));
+        }
+        else
+        {
+            this->SetIsDone(true);
         }
     }
-    return vvRetLengths;
+
+    if (!vRet.empty())
+    {
+        for (size_t i = 0; i < vRet.size(); ++i)
+        {
+            vRet[i] = m_vLengths[vRet[i]];
+        }
+    }
+    return vRet;
 }
 
 #endif //SPECSEM_LAB1_CUSTOMBRUTEFORCESTRATEGY_H

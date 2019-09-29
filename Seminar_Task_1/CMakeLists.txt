@@ -20,6 +20,7 @@ set(
         IAlgorithmData.h
         BaseAlgorithmData.h
         IStrategy.h
+        AStrategy.h
         BasicStrategy.h
         CustomSortingStrategy.h
         CustomBruteforceStrategy.h
