@@ -14,25 +14,31 @@ template<typename T>
 class CustomBruteforceStrategy : public AStrategy<T>
 {
     public:
-        explicit CustomBruteforceStrategy(size_t nW);
+        explicit CustomBruteforceStrategy(size_t nMaxSteps, size_t nRepeats);
         void SetLengths(std::vector<T> vLengths)  override;
         std::vector<T> GetNextLengths() override;
 
     private:
-        size_t m_nW;
+        size_t m_nMaxSteps;
+        size_t m_nMaxRepeats;
+        size_t m_nCurrentStep;
+        size_t m_nCurrentRepeat;
         std::vector<T> m_vLengths;
 };
 
 template<typename T>
-CustomBruteforceStrategy<T>::CustomBruteforceStrategy(size_t nW)
+CustomBruteforceStrategy<T>::CustomBruteforceStrategy(size_t nMaxSteps, size_t nRepeats)
+: m_nCurrentStep(0),
+  m_nCurrentRepeat(0)
 {
-    if (nW >= 0 && nW <= 100)
+    if ((nMaxSteps >= 2) && (nRepeats >= 1))
     {
-        m_nW = nW;
+        m_nMaxSteps = nMaxSteps;
+        m_nMaxRepeats = nRepeats;
     }
     else
     {
-        throw std::invalid_argument("W should be between 0 and 100");
+        throw std::invalid_argument("Steps count must be >= 2; Repeat count must be >= 1");
     }
 }
 
@@ -43,37 +49,39 @@ void CustomBruteforceStrategy<T>::SetLengths(std::vector<T> vLengths)
     this->m_vPermutation.resize(vLengths.size());
     std::iota(this->m_vPermutation.begin(), this->m_vPermutation.end(), 0);
 
-    std::sort(this->m_vPermutation.begin(), this->m_vPermutation.end(), [&vLengths](T& l, T& r)
-    {
-        return vLengths[l] > vLengths[r];
-    });
-    size_t k = (m_nW * this->m_vPermutation.size()) / 100;
-    auto aLastElement = std::next(this->m_vPermutation.begin(), k);
-
-    // This sorting is needed for std::next_permutation
-    // because it works with lexicographically ordered sequences
-    std::sort(aLastElement, this->m_vPermutation.end());
-
     m_vLengths = std::move(vLengths);
     this->SetIsDone(false);
+
+    m_nCurrentStep = 0;
+    m_nCurrentRepeat = 0;
 }
 
 template<typename T>
 std::vector<T> CustomBruteforceStrategy<T>::GetNextLengths()
 {
     std::vector<T> vRet;
+    std::sort(this->m_vPermutation.begin(), this->m_vPermutation.end(),
+            [this](int l, int r)
+            {
+                return (this->m_vLengths[l] > this->m_vLengths[r]);
+            }
+            );
     if (!this->IsDone() && !this->m_vPermutation.empty())
     {
-        size_t k = (m_nW * this->m_vPermutation.size()) / 100;
+        double dW = static_cast<double>((m_nCurrentStep * 100)) / (m_nMaxSteps);
+        size_t k = (dW * this->m_vPermutation.size()) / 100;
         auto aLastElement = std::next(this->m_vPermutation.begin(), k);
+        std::random_shuffle(aLastElement, this->m_vPermutation.end());
         vRet = this->m_vPermutation;
-        if (k < this->m_vPermutation.size())
+        ++m_nCurrentRepeat;
+        if (m_nCurrentRepeat >= m_nMaxRepeats)
         {
-            this->SetIsDone(!std::next_permutation(aLastElement, this->m_vPermutation.end()));
-        }
-        else
-        {
-            this->SetIsDone(true);
+            ++m_nCurrentStep;
+            m_nCurrentRepeat = 0;
+            if (m_nCurrentStep >= m_nMaxSteps)
+            {
+                this->SetIsDone(true);
+            }
         }
     }
 

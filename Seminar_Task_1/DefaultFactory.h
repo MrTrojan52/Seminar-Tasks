@@ -51,7 +51,7 @@ std::unique_ptr<IStrategy<T>> DefaultFactory<T>::GetStrategyByEnum(etStrategy eS
             pStrategy.reset(new CustomSortingStrategy<T>(DEFAULT_STEPS_FOR_SORTING));
             break;
         case eSTRATEGY_CUSTOM_BRUTEFORCE:
-            pStrategy.reset(new CustomBruteforceStrategy<T>(DEFAULT_W_FOR_BRUTEFORCE));
+            pStrategy.reset(new CustomBruteforceStrategy<T>(DEFAULT_STEPS_FOR_BRUTEFORCE, DEFAULT_REPEAT_COUNT));
             break;
         case eSTRATEGY_AS_IS:
         case eSTRATEGY_ALL:

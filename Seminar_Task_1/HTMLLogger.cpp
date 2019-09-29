@@ -92,9 +92,9 @@ std::string HTMLLogger::AddHeaders()
     std::vector<std::string> vSubHeaders;
     for (;nStrategyCount > 0; --nStrategyCount)
     {
-        vSubHeaders.emplace_back("res");
-        vSubHeaders.emplace_back("(res - l) / l");
-        vSubHeaders.emplace_back("(b - res) / b");
+        vSubHeaders.emplace_back("Criterion"); // res
+        vSubHeaders.emplace_back("Lower bound deviation"); // (res - l) / l
+        vSubHeaders.emplace_back("Basic deviation"); // (b - res) / b
     }
     sHeaderRowData += AddRow(vSubHeaders);
     return sHeaderRowData;

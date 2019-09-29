@@ -18,8 +18,9 @@
 #define TABLE_DEFAULT_COLSPAN_FOR_STRATEGY 3
 #define TABLE_DEFAULT_ROWSPAN_FOR_HEADER   2
 
-#define DEFAULT_W_FOR_BRUTEFORCE           50
 #define DEFAULT_STEPS_FOR_SORTING          10
+#define DEFAULT_STEPS_FOR_BRUTEFORCE       50
+#define DEFAULT_REPEAT_COUNT               10
 
 enum etAlgorithm
 {

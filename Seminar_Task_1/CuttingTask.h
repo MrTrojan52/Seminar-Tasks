@@ -94,9 +94,12 @@ void CCuttingTask<T>::Solve()
         int nBasicSolution = 0;
         if (m_eStrategy == eSTRATEGY_ALL)
         {
+            // We need to find solution for BASIC strategy first
+            // because we use it for algorithm efficiency comparison
             FindSolution(eSTRATEGY_BASIC);
             nBasicSolution = CalcCrit(m_vSolution);
             FillRowForSolution(vRow, nBasicSolution, nLowerBound, nBasicSolution);
+            // Find solution for all strategies and populate rows for logger
             for (size_t nStrategy = eSTRATEGY_BASIC + 1; nStrategy < eSTRATEGY_ALL; ++nStrategy)
             {
                 SetStrategy(static_cast<etStrategy>(nStrategy));
@@ -104,9 +107,12 @@ void CCuttingTask<T>::Solve()
                 int nSolution = CalcCrit(m_vSolution);
                 FillRowForSolution(vRow, nSolution, nLowerBound, nBasicSolution);
             }
+            SetStrategy(eSTRATEGY_ALL);
         }
         else
         {
+            // We need to find solution for BASIC strategy first
+            // because we use it for algorithm efficiency comparison
             FindSolution(eSTRATEGY_BASIC);
             nBasicSolution = CalcCrit(m_vSolution);
             FillRowForSolution(vRow, nBasicSolution, nLowerBound, nBasicSolution);
