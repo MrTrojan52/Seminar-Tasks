@@ -10,7 +10,7 @@
 class HTMLLogger : public BaseLogger
 {
     public:
-        explicit HTMLLogger(std::string sFileName);
+        explicit HTMLLogger(const std::string& rFileName);
         void PrintData() override;
 
     private:

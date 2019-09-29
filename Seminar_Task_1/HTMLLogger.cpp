@@ -8,8 +8,8 @@
 
 #include "Definitions.h"
 
-HTMLLogger::HTMLLogger(std::string sFileName)
-: m_sFileName(std::move(sFileName))
+HTMLLogger::HTMLLogger(const std::string& rFileName)
+: m_sFileName(rFileName)
 {
 
 }
