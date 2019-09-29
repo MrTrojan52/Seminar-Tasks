@@ -55,6 +55,7 @@ void CustomBruteforceStrategy<T>::SetLengths(std::vector<T> vLengths)
     std::sort(aLastElement, this->m_vPermutation.end());
 
     m_vLengths = std::move(vLengths);
+    this->SetIsDone(false);
 }
 
 template<typename T>

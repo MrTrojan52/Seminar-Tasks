@@ -26,6 +26,8 @@ template<typename T>
 void CustomSortingStrategy<T>::SetLengths(std::vector<T> vLengths)
 {
     this->m_vPermutation = std::move(vLengths);
+    this->SetIsDone(false);
+    m_nCurrentStep = 0;
 }
 
 template<typename T>
@@ -34,7 +36,7 @@ std::vector<T> CustomSortingStrategy<T>::GetNextLengths()
     if (!this->IsDone() && !this->m_vPermutation.empty())
     {
         std::sort(this->m_vPermutation.begin(), this->m_vPermutation.end(), std::greater<T>());
-        double w = (m_nCurrentStep * 100) / (m_nMaxSteps - 1);
+        double w = static_cast<double>((m_nCurrentStep * 100)) / (m_nMaxSteps);
         int k = (this->m_vPermutation.size() * w) / 100;
         auto aLastElement = std::next(this->m_vPermutation.begin(), k);
         std::sort(aLastElement, this->m_vPermutation.end());

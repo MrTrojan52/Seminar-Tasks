@@ -23,6 +23,7 @@ void BasicStrategy<T>::SetLengths(std::vector<T> vLengths)
 {
     this->m_vPermutation = std::move(vLengths);
     std::sort(this->m_vPermutation.begin(), this->m_vPermutation.end(), std::greater<T>());
+    this->SetIsDone(false);
 }
 
 template<typename T>
