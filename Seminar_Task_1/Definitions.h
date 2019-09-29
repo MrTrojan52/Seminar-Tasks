@@ -19,6 +19,7 @@
 #define TABLE_DEFAULT_ROWSPAN_FOR_HEADER   2
 
 #define DEFAULT_W_FOR_BRUTEFORCE           50
+#define DEFAULT_STEPS_FOR_SORTING          10
 
 enum etAlgorithm
 {
