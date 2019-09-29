@@ -35,7 +35,7 @@ public:
     [[nodiscard]] int GetLowerBound() const;
 
 private:
-    IAlgorithmData<T>* GetAlgorithmData(std::vector<T>& vLengths);
+    std::unique_ptr<IAlgorithmData<T>> GetAlgorithmData(std::vector<T>& vLengths);
     void PopulateTaskFromFile(const std::string& sFilePath);
     void ClearTaskData();
     void FindSolution(etStrategy eStrategy = eSTRATEGY_UNKNOWN);
@@ -195,13 +195,13 @@ int CCuttingTask<T>::GetLowerBound() const
 }
 
 template<typename T>
-IAlgorithmData<T>* CCuttingTask<T>::GetAlgorithmData(std::vector<T>& vLengths)
+std::unique_ptr<IAlgorithmData<T>> CCuttingTask<T>::GetAlgorithmData(std::vector<T>& vLengths)
 {
-    IAlgorithmData<T>* pAlgorithmData = nullptr;
+    std::unique_ptr<IAlgorithmData<T>> pAlgorithmData = nullptr;
     switch(m_eAlgorithm)
     {
         case eALGORITHM_GREEDY:
-            pAlgorithmData = new BaseAlgorithmData<T>;
+            pAlgorithmData.reset(new BaseAlgorithmData<T>);
             pAlgorithmData->SetDataByAttribute(ATTR_ROD_LENGTH, m_nRodLength);
             if (vLengths.empty())
             {
@@ -240,7 +240,7 @@ void CCuttingTask<T>::FindSolution(etStrategy eStrategy)
         m_vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(m_vLengths));
         return;
     }
-    
+
     std::unique_ptr<IStrategy<T>> pOldStrategy = nullptr;
     if (CurrentStrategy != m_eStrategy)
     {

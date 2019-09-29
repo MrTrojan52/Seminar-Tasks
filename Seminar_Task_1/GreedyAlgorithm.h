@@ -12,11 +12,11 @@ template<typename T>
 class GreedyAlgorithm : public IAlgorithm<T>
 {
     public:
-        std::vector<int> GetSolution(IAlgorithmData<T>* data) override;
+        std::vector<int> GetSolution(std::unique_ptr<IAlgorithmData<T>> data) override;
 };
 
 template<typename T>
-std::vector<int> GreedyAlgorithm<T>::GetSolution(IAlgorithmData<T>* data)
+std::vector<int> GreedyAlgorithm<T>::GetSolution(std::unique_ptr<IAlgorithmData<T>> data)
 {
     std::vector<T> vRods;
     T nRodLength = std::get<T>(data->GetDataByAttribute(ATTR_ROD_LENGTH));

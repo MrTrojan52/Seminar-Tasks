@@ -11,6 +11,6 @@ template<typename AlgDataType, typename SolutionType = std::vector<int>>
 class IAlgorithm
 {
 public:
-    virtual SolutionType GetSolution(IAlgorithmData<AlgDataType>* data) = 0;
+    virtual SolutionType GetSolution(std::unique_ptr<IAlgorithmData<AlgDataType>> data) = 0;
 };
 #endif //SPECSEM_LAB1_IALGORITHM_H
