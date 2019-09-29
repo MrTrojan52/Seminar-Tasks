@@ -50,6 +50,7 @@ IStrategy<T>* DefaultFactory<T>::GetStrategyByEnum(etStrategy eStrategy)
             // TODO: return Second strategy
             break;
         case eSTRATEGY_AS_IS:
+        case eSTRATEGY_ALL:
         default:
             break;
     }

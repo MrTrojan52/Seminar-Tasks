@@ -17,6 +17,8 @@
 #include "IAlgorithm.h"
 #include "DefaultFactory.h"
 #include "BaseAlgorithmData.h"
+#include "ILogger.h"
+#include "HTMLLogger.h"
 
 namespace fs = std::filesystem;
 
@@ -29,18 +31,24 @@ public:
     explicit CCuttingTask(etAlgorithm eAlgorithm, etStrategy = eSTRATEGY_AS_IS);
     void SetTasksPath(const std::string& sPath);
     virtual void Solve();
+    void PrintData();
     [[nodiscard]] int GetLowerBound() const;
 
 private:
-    IAlgorithmData<T>* GetAlgorithmData(std::vector<T>& vLenghts);
+    IAlgorithmData<T>* GetAlgorithmData(std::vector<T>& vLengths);
     void PopulateTaskFromFile(const std::string& sFilePath);
     void ClearTaskData();
-    int CalcCrit(const std::vector<int>& vSolution) const;
+    void FindSolution(etStrategy eStrategy = eSTRATEGY_UNKNOWN);
+    void FillRowForSolution(std::vector<std::string>& vRow, int nSolution, int nLowerBound, int nBasicSolution);
+    void SetStrategy(etStrategy eStrategy);
+    void InitializeLoggerData();
+    [[nodiscard]] int CalcCrit(const std::vector<int>& vSolution) const;
     [[nodiscard]] std::vector<std::string> ExtractFilesFromPath() const;
     etAlgorithm m_eAlgorithm;
     etStrategy m_eStrategy;
     IAlgorithm<T>* m_pAlgorithm;
     IStrategy<T>* m_pStrategy;
+    ILogger* m_pLogger;
     std::string m_sTasksPath;
     std::vector<T> m_vLenghts;
     std::vector<int> m_vSolution;
@@ -50,12 +58,11 @@ private:
 template<typename T>
 CCuttingTask<T>::CCuttingTask(etAlgorithm eAlgorithm, etStrategy eStrategy)
 : m_nRodLength(0),
-  m_eAlgorithm(eAlgorithm),
-  m_eStrategy(eStrategy)
-
+  m_eAlgorithm(eAlgorithm)
 {
     m_pAlgorithm = DefaultFactory<T>::GetAlgorithmByEnum(m_eAlgorithm);
-    m_pStrategy = DefaultFactory<T>::GetStrategyByEnum(m_eStrategy);
+    m_pLogger = new HTMLLogger(SAVE_HTML_DEFAULT_FILENAME);
+    SetStrategy(eStrategy);
 }
 
 template<typename T>
@@ -72,33 +79,41 @@ void CCuttingTask<T>::Solve()
     {
         throw std::logic_error("Incorrect path.");
     }
-
+    InitializeLoggerData();
+    int nTaskNumber = 0;
     for (auto& file : vFiles)
     {
+        ++nTaskNumber;
         PopulateTaskFromFile(file);
-        if (m_eStrategy == eSTRATEGY_AS_IS)
+        std::vector<std::string> vRow;
+        vRow.push_back(std::to_string(nTaskNumber));
+        vRow.push_back(std::to_string(GetLowerBound()));
+        int nLowerBound = GetLowerBound();
+        int nBasicSolution = 0;
+        if (m_eStrategy == eSTRATEGY_ALL)
         {
-            m_vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(m_vLenghts));
-            continue;
-        }
-        
-        std::vector<std::vector<T> > vvUpdatedLenghts = m_pStrategy->GetUpdatedLengths(m_vLenghts);
-        int nMinCrit = m_vLenghts.size() + 1;
-        for (auto vLenghts : vvUpdatedLenghts)
-        {
-            std::vector<int> vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(vLenghts));
-            int nCurrentCrit = CalcCrit(vSolution);
-            if (nCurrentCrit < nMinCrit)
+            FindSolution(eSTRATEGY_BASIC);
+            nBasicSolution = CalcCrit(m_vSolution);
+            FillRowForSolution(vRow, nBasicSolution, nLowerBound, nBasicSolution);
+            for (size_t nStrategy = eSTRATEGY_BASIC + 1; nStrategy < eSTRATEGY_ALL; ++nStrategy)
             {
-                nMinCrit = nCurrentCrit;
-                m_vSolution = vSolution;
+                SetStrategy(static_cast<etStrategy>(nStrategy));
+                FindSolution();
+                int nSolution = CalcCrit(m_vSolution);
+                FillRowForSolution(vRow, nSolution, nLowerBound, nBasicSolution);
             }
         }
-
+        else
+        {
+            FindSolution(eSTRATEGY_BASIC);
+            nBasicSolution = CalcCrit(m_vSolution);
+            FillRowForSolution(vRow, nBasicSolution, nLowerBound, nBasicSolution);
+            FindSolution();
+            int nSolution = CalcCrit(m_vSolution);
+            FillRowForSolution(vRow, nSolution, nLowerBound, nBasicSolution);
+        }
+        m_pLogger->AddRow(vRow);
     }
-    // TODO: Realize solving
-
-
 }
 
 template<typename T>
@@ -205,6 +220,86 @@ template<typename T>
 int CCuttingTask<T>::CalcCrit(const std::vector<int>& vSolution) const
 {
     return *std::max_element(vSolution.begin(), vSolution.end()) + 1;
+}
+
+template<typename T>
+void CCuttingTask<T>::SetStrategy(etStrategy eStrategy)
+{
+    m_eStrategy = eStrategy;
+    m_pStrategy = DefaultFactory<T>::GetStrategyByEnum(eStrategy);
+}
+
+template<typename T>
+void CCuttingTask<T>::FindSolution(etStrategy eStrategy)
+{
+    etStrategy CurrentStrategy = (eStrategy == eSTRATEGY_UNKNOWN) ? m_eStrategy : eStrategy;
+    if (CurrentStrategy == eSTRATEGY_AS_IS)
+    {
+        m_vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(m_vLenghts));
+        return;
+    }
+    IStrategy<T>* pOldStrategy;
+    if (CurrentStrategy != m_eStrategy)
+    {
+        pOldStrategy = m_pStrategy;
+        m_pStrategy = DefaultFactory<T>::GetStrategyByEnum(CurrentStrategy);
+    }
+    std::vector<std::vector<T> > vvUpdatedLenghts = m_pStrategy->GetUpdatedLengths(m_vLenghts);
+    int nMinCrit = m_vLenghts.size() + 1;
+    for (auto vLenghts : vvUpdatedLenghts)
+    {
+        std::vector<int> vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(vLenghts));
+        int nCurrentCrit = CalcCrit(vSolution);
+        if (nCurrentCrit < nMinCrit)
+        {
+            nMinCrit = nCurrentCrit;
+            m_vSolution = vSolution;
+        }
+    }
+    if (CurrentStrategy != m_eStrategy)
+    {
+        if (pOldStrategy)
+        {
+            m_pStrategy = pOldStrategy;
+        }
+        else
+        {
+            m_pStrategy = DefaultFactory<T>::GetStrategyByEnum(m_eStrategy);
+        }
+    }
+}
+
+template<typename T>
+void CCuttingTask<T>::InitializeLoggerData()
+{
+    m_pLogger->AddHeader("#");
+    m_pLogger->AddHeader("Lower bound");
+    if (m_eStrategy == eSTRATEGY_ALL)
+    {
+        for (size_t nStrategy = eSTRATEGY_BASIC; nStrategy < eSTRATEGY_ALL; ++nStrategy)
+        {
+            m_pLogger->AddHeader(GetStrategyNameByEnum(static_cast<etStrategy>(nStrategy)));
+        }
+    }
+    else
+    {
+        m_pLogger->AddHeader(GetStrategyNameByEnum(eSTRATEGY_BASIC));
+        m_pLogger->AddHeader(GetStrategyNameByEnum(m_eStrategy));
+    }
+}
+
+template<typename T>
+void CCuttingTask<T>::FillRowForSolution(std::vector<std::string> &vRow, int nSolution, int nLowerBound, int nBasic)
+{
+    vRow.push_back(std::to_string(nSolution));
+    vRow.push_back(std::to_string((double)(nSolution - nLowerBound) / nBasic));
+    vRow.push_back(std::to_string((double)(nBasic - nSolution) / nBasic));
+}
+
+template<typename T>
+void CCuttingTask<T>::PrintData()
+{
+    m_pLogger->PrintData();
 }
 
 
