@@ -46,11 +46,13 @@ private:
     [[nodiscard]] std::vector<std::string> ExtractFilesFromPath() const;
     etAlgorithm m_eAlgorithm;
     etStrategy m_eStrategy;
-    IAlgorithm<T>* m_pAlgorithm;
-    IStrategy<T>* m_pStrategy;
-    ILogger* m_pLogger;
+
+    std::unique_ptr<IAlgorithm<T>>  m_pAlgorithm;
+    std::unique_ptr<IStrategy<T>> m_pStrategy;
+    std::unique_ptr<ILogger>  m_pLogger;
+
     std::string m_sTasksPath;
-    std::vector<T> m_vLenghts;
+    std::vector<T> m_vLengths;
     std::vector<int> m_vSolution;
     T m_nRodLength;
 };
@@ -61,7 +63,7 @@ CCuttingTask<T>::CCuttingTask(etAlgorithm eAlgorithm, etStrategy eStrategy)
   m_eAlgorithm(eAlgorithm)
 {
     m_pAlgorithm = DefaultFactory<T>::GetAlgorithmByEnum(m_eAlgorithm);
-    m_pLogger = new HTMLLogger(SAVE_HTML_DEFAULT_FILENAME);
+    m_pLogger.reset(new HTMLLogger(SAVE_HTML_DEFAULT_FILENAME));
     SetStrategy(eStrategy);
 }
 
@@ -162,7 +164,7 @@ template<typename T>
 void CCuttingTask<T>::ClearTaskData()
 {
     m_nRodLength = 0;
-    m_vLenghts.clear();
+    m_vLengths.clear();
 }
 
 template<typename T>
@@ -175,8 +177,8 @@ void CCuttingTask<T>::PopulateTaskFromFile(const std::string& sFilePath)
     {
         // The first number in a file is a Rod Length
         iFile >> m_nRodLength;
-        std::copy(std::istream_iterator<T>(iFile), {}, std::back_inserter(m_vLenghts));
-        m_vLenghts.shrink_to_fit();
+        std::copy(std::istream_iterator<T>(iFile), {}, std::back_inserter(m_vLengths));
+        m_vLengths.shrink_to_fit();
     }
     else
     {
@@ -187,7 +189,7 @@ void CCuttingTask<T>::PopulateTaskFromFile(const std::string& sFilePath)
 template<typename T>
 int CCuttingTask<T>::GetLowerBound() const
 {
-    auto sum = std::accumulate(m_vLenghts.begin(), m_vLenghts.end(), T());
+    auto sum = std::accumulate(m_vLengths.begin(), m_vLengths.end(), T());
     int relation = static_cast<int>(sum / m_nRodLength);
     return (sum % m_nRodLength > 0 ? relation + 1 : relation);
 }
@@ -203,7 +205,7 @@ IAlgorithmData<T>* CCuttingTask<T>::GetAlgorithmData(std::vector<T>& vLengths)
             pAlgorithmData->SetDataByAttribute(ATTR_ROD_LENGTH, m_nRodLength);
             if (vLengths.empty())
             {
-                pAlgorithmData->SetDataByAttribute(ATTR_LENGHTS_ARRAY, m_vLenghts);
+                pAlgorithmData->SetDataByAttribute(ATTR_LENGHTS_ARRAY, m_vLengths);
             }
             else
             {
@@ -235,25 +237,21 @@ void CCuttingTask<T>::FindSolution(etStrategy eStrategy)
     etStrategy CurrentStrategy = (eStrategy == eSTRATEGY_UNKNOWN) ? m_eStrategy : eStrategy;
     if (CurrentStrategy == eSTRATEGY_AS_IS)
     {
-        m_vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(m_vLenghts));
+        m_vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(m_vLengths));
         return;
     }
-    IStrategy<T>* pOldStrategy = nullptr;
+    
+    std::unique_ptr<IStrategy<T>> pOldStrategy = nullptr;
     if (CurrentStrategy != m_eStrategy)
     {
-        pOldStrategy = m_pStrategy;
+        pOldStrategy = std::move(m_pStrategy);
         m_pStrategy = DefaultFactory<T>::GetStrategyByEnum(CurrentStrategy);
     }
 
-    m_pStrategy->SetLengths(m_vLenghts);
-    int nMinCrit = m_vLenghts.size() + 1;
-    int k = 0;
+    m_pStrategy->SetLengths(m_vLengths);
+    int nMinCrit = m_vLengths.size() + 1;
     while (!m_pStrategy->IsDone())
     {
-        if (CurrentStrategy == eSTRATEGY_CUSTOM_BRUTEFORCE)
-        {
-            ++k;
-        }
         std::vector<T> vCurrentLengths = std::move(m_pStrategy->GetNextLengths());
         std::vector<int> vSolution = m_pAlgorithm->GetSolution(GetAlgorithmData(vCurrentLengths));
         int nCurrentCrit = CalcCrit(vSolution);
@@ -263,12 +261,12 @@ void CCuttingTask<T>::FindSolution(etStrategy eStrategy)
             m_vSolution = vSolution;
         }
     }
-    std::cout << k << std::endl;
+
     if (CurrentStrategy != m_eStrategy)
     {
         if (pOldStrategy)
         {
-            m_pStrategy = pOldStrategy;
+            m_pStrategy = std::move(pOldStrategy);
         }
         else
         {
