@@ -93,7 +93,7 @@ std::string HTMLLogger::AddHeaders()
     for (;nStrategyCount > 0; --nStrategyCount)
     {
         vSubHeaders.emplace_back("res");
-        vSubHeaders.emplace_back("(res - l) / b");
+        vSubHeaders.emplace_back("(res - l) / l");
         vSubHeaders.emplace_back("(b - res) / b");
     }
     sHeaderRowData += AddRow(vSubHeaders);

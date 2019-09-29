@@ -292,7 +292,7 @@ template<typename T>
 void CCuttingTask<T>::FillRowForSolution(std::vector<std::string> &vRow, int nSolution, int nLowerBound, int nBasic)
 {
     vRow.push_back(std::to_string(nSolution));
-    vRow.push_back(std::to_string((double)(nSolution - nLowerBound) / nBasic));
+    vRow.push_back(std::to_string((double)(nSolution - nLowerBound) / nLowerBound));
     vRow.push_back(std::to_string((double)(nBasic - nSolution) / nBasic));
 }
 

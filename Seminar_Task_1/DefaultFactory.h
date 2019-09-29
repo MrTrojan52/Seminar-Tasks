@@ -8,6 +8,7 @@
 #include "IAlgorithm.h"
 #include "IStrategy.h"
 #include "BasicStrategy.h"
+#include "CustomBruteforceStrategy.h"
 #include "GreedyAlgorithm.h"
 #include "Definitions.h"
 
@@ -47,7 +48,7 @@ IStrategy<T>* DefaultFactory<T>::GetStrategyByEnum(etStrategy eStrategy)
             //TODO: return First strategy
             break;
         case eSTRATEGY_CUSTOM_BRUTEFORCE:
-            // TODO: return Second strategy
+            pStrategy = new CustomBruteforceStrategy<T>(DEFAULT_W_FOR_BRUTEFORCE);
             break;
         case eSTRATEGY_AS_IS:
         case eSTRATEGY_ALL:
