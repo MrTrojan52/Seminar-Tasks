@@ -5,18 +5,37 @@
 #ifndef SPECSEM_LAB1_CUSTOMSORTINGSTRATEGY_H
 #define SPECSEM_LAB1_CUSTOMSORTINGSTRATEGY_H
 
+#include <algorithm>
+
 #include "AStrategy.h"
 
 template<typename T>
 class CustomSortingStrategy : public AStrategy<T>
 {
     public:
-        void SetLengths(std::vector<T> vLenghts) override;
+        void SetLengths(std::vector<T> vLengths)  override;
+        std::vector<T> GetNextLengths() override;
 };
 
 template<typename T>
-void CustomSortingStrategy<T>::SetLengths(std::vector<T> vLenghts) {
-    this->SetIsDone(true);
+void CustomSortingStrategy<T>::SetLengths(std::vector<T> vLengths)
+{
+    this->m_vPermutation = std::move(vLengths);
+    std::sort(this->m_vPermutation.begin(), this->m_vPermutation.end());
+}
+
+template<typename T>
+std::vector<T> CustomSortingStrategy<T>::GetNextLengths()
+{
+    if (!this->IsDone() && !this->m_vPermutation.empty())
+    {
+        this->SetIsDone(true);
+        return this->m_vPermutation;
+    }
+    else
+    {
+        return std::vector<T>();
+    }
 }
 
 #endif //SPECSEM_LAB1_CUSTOMSORTINGSTRATEGY_H
