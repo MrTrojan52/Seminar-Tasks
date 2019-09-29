@@ -1,5 +1,5 @@
 //
-// Created by trojan52 on 27.09.2019.
+// Created by trojan52.
 //
 
 #ifndef SPECSEM_LAB1_DEFINITIONS_H

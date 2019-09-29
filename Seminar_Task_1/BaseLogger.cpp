@@ -1,5 +1,5 @@
 //
-// Created by trojan52 on 29.09.2019.
+// Created by trojan52.
 //
 
 #include "BaseLogger.h"

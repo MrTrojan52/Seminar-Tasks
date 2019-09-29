@@ -1,5 +1,5 @@
 //
-// Created by Trojan on 27.09.2019.
+// Created by Trojan.
 //
 
 #ifndef SPECSEM_LAB1_IALGORITHM_H
