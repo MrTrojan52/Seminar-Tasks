@@ -7,6 +7,10 @@ set(
         SOURCES
         main.cpp
         DeliveryTask.cpp
+        DefaultFactory.cpp
+        BaseBranchingStrategy.cpp
+        BaseLowerBoundStrategy.cpp
+        BaseUpperBoundStrategy.cpp
 )
 
 set(
@@ -14,6 +18,13 @@ set(
         DeliveryTask.h
         Definitions.h
         VertexInfo.h
+        ILowerBoundStrategy.h
+        IUpperBoundStrategy.h
+        IBranchingStrategy.h
+        DefaultFactory.h
+        BaseBranchingStrategy.h
+        BaseLowerBoundStrategy.h
+        BaseUpperBoundStrategy.h
 )
 
 add_executable(Seminar_Task_2 ${HEADERS} ${SOURCES})

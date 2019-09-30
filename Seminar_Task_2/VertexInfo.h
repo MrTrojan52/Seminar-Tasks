@@ -18,6 +18,11 @@ struct VertexInfo
       nLowerBound(nLB),
       nUpperBound(nUB)
     { }
+
+    [[nodiscard]] bool IsBoundsEqual() const
+    {
+        return (nLowerBound == nUpperBound);
+    };
 };
 
 #endif //SEMINAR_TASK_2_VERTEXINFO_H
