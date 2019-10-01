@@ -11,6 +11,7 @@ set(
         BaseBranchingStrategy.cpp
         BaseLowerBoundStrategy.cpp
         BaseUpperBoundStrategy.cpp
+        ABoundStrategy.cpp
 )
 
 set(
@@ -25,6 +26,7 @@ set(
         BaseBranchingStrategy.h
         BaseLowerBoundStrategy.h
         BaseUpperBoundStrategy.h
+        ABoundStrategy.h
 )
 
 add_executable(Seminar_Task_2 ${HEADERS} ${SOURCES})

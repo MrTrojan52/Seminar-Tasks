@@ -6,11 +6,12 @@
 #define SEMINAR_TASK_2_BASEUPPERBOUNDSTRATEGY_H
 
 #include "IUpperBoundStrategy.h"
+#include "ABoundStrategy.h"
 
-class BaseUpperBoundStrategy : public IUpperBoundStrategy
+class BaseUpperBoundStrategy : public IUpperBoundStrategy, public ABoundStrategy
 {
     public:
-        int GetUpperBound(std::vector<int>& vVertex, std::vector<int>& vDeadlines, nMatrix& mTimes) override;
+        int GetUpperBound(const std::vector<int>& vVertex, std::vector<int>& vDeadlines, nMatrix& mTimes) override;
 };
 
 

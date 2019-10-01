@@ -78,7 +78,7 @@ void DeliveryTask::Solve()
         UpdateBounds();
         DoBoundsAndTrees();
     }
-
+    UpdateBounds();
 }
 
 void DeliveryTask::PopulateTaskFromFile(const std::string &sFile)
@@ -120,7 +120,7 @@ void DeliveryTask::ClearTaskData()
 {
     m_nTaskSize = 0;
     m_nCount = 0;
-    m_nUpperRecord = std::numeric_limits<int>::infinity();
+    m_viRecord = VertexInfo({}, std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
     m_mTimes.clear();
     m_vDeadlines.clear();
     m_vVertexes.clear();
@@ -128,20 +128,21 @@ void DeliveryTask::ClearTaskData()
 
 void DeliveryTask::UpdateBounds()
 {
+    m_viRecord = VertexInfo({}, std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
     for (VertexInfo& info : m_vVertexes)
     {
         info.nLowerBound = m_pLowerBoundStrategy->GetLowerBound(info.vVertex, m_vDeadlines, m_mTimes);
         info.nUpperBound = m_pUpperBoundStrategy->GetUpperBound(info.vVertex, m_vDeadlines, m_mTimes);
-        UpdateRecord(info.nUpperBound);
+        UpdateRecord(info);
     }
 }
 
 
-void DeliveryTask::UpdateBounds(VertexInfo &rVertex)
+void DeliveryTask::UpdateBounds(VertexInfo& rVertex)
 {
     rVertex.nLowerBound = m_pLowerBoundStrategy->GetLowerBound(rVertex.vVertex, m_vDeadlines, m_mTimes);
     rVertex.nUpperBound = m_pUpperBoundStrategy->GetUpperBound(rVertex.vVertex, m_vDeadlines, m_mTimes);
-    UpdateRecord(rVertex.nUpperBound);
+    UpdateRecord(rVertex);
 }
 
 DeliveryTask::DeliveryTask(
@@ -151,11 +152,12 @@ DeliveryTask::DeliveryTask(
                            )
 : m_nTaskSize(0),
   m_nCount(0),
-  m_nUpperRecord(std::numeric_limits<int>::infinity())
+  m_viRecord({}, std::numeric_limits<int>::max(), std::numeric_limits<int>::max())
 {
     SetBranchingStrategy(eBranching);
     SetLowerBoundStrategy(eLower);
     SetUpperBoundStrategy(eUpper);
+    m_nStep = 0;
 }
 
 void DeliveryTask::SetBranchingStrategy(etBranchingStrategy eBranchingStrategy)
@@ -182,6 +184,7 @@ void DeliveryTask::DoBoundsAndTrees()
     VertexInfo viVertex;
     while (true)
     {
+        m_nStep++;
         viVertex = m_pBranchingStrategy->Branching(m_vVertexes);
         AddVertexesAfterBranching(viVertex);
         if ((viVertex.vVertex.size() == m_nTaskSize) && viVertex.IsBoundsEqual())
@@ -194,6 +197,7 @@ void DeliveryTask::DoBoundsAndTrees()
 
 void DeliveryTask::AddVertexesAfterBranching(VertexInfo& rVertex)
 {
+    bool bRecordDeleted = (m_viRecord == rVertex);
     for (size_t i = 0; i < m_nTaskSize; ++i)
     {
         if (std::find(CONTAINER_BOUNDS(rVertex.vVertex), (i + 1)) == rVertex.vVertex.end())
@@ -204,26 +208,33 @@ void DeliveryTask::AddVertexesAfterBranching(VertexInfo& rVertex)
             rVertex.vVertex.pop_back();
         }
     }
+    if (bRecordDeleted)
+    {
+        UpdateBounds();
+    }
 }
 
 void DeliveryTask::ClipVertexes()
 {
     for (int i = 0; i < m_vVertexes.size(); ++i)
     {
-        if (m_vVertexes[i].nLowerBound >= m_nUpperRecord)
+        if (m_vVertexes[i].nLowerBound >= m_viRecord.nUpperBound)
         {
-            std::swap(m_vVertexes[i], m_vVertexes.back());
-            m_vVertexes.pop_back();
-            --i;
+            if (m_vVertexes[i] != m_viRecord)
+            {
+                std::swap(m_vVertexes[i], m_vVertexes.back());
+                m_vVertexes.pop_back();
+                --i;
+            }
         }
     }
 }
 
-void DeliveryTask::UpdateRecord(int nUpperBound)
+void DeliveryTask::UpdateRecord(VertexInfo& rVertex)
 {
-    if (nUpperBound < m_nUpperRecord)
+    if (rVertex.nUpperBound < m_viRecord.nUpperBound)
     {
-        m_nUpperRecord = nUpperBound;
+        m_viRecord = rVertex;
     }
 }
 

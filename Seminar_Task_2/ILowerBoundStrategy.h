@@ -12,6 +12,6 @@
 class ILowerBoundStrategy
 {
     public:
-        virtual int GetLowerBound(std::vector<int>& vVertex, std::vector<int>& vDeadlines, nMatrix& mTimes) = 0;
+        virtual int GetLowerBound(const std::vector<int>& vVertex, std::vector<int>& vDeadlines, nMatrix& mTimes) = 0;
 };
 #endif //SEMINAR_TASK_2_ILOWERBOUNDSTRATEGY_H

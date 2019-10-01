@@ -37,7 +37,7 @@ class DeliveryTask
         void UpdateBounds(VertexInfo& rVertex);
         void AddVertexesAfterBranching(VertexInfo& rVertex);
         void ClipVertexes();
-        void UpdateRecord(int nUpperBound);
+        void UpdateRecord(VertexInfo& rVertex);
         void DoBoundsAndTrees();
 
         std::string m_sTasksPath;
@@ -46,7 +46,8 @@ class DeliveryTask
         nMatrix m_mTimes;
         std::vector<VertexInfo> m_vVertexes;
         size_t m_nCount;
-        int m_nUpperRecord;
+        VertexInfo m_viRecord;
+        int m_nStep;
 
         std::unique_ptr<ILowerBoundStrategy> m_pLowerBoundStrategy;
         std::unique_ptr<IUpperBoundStrategy> m_pUpperBoundStrategy;

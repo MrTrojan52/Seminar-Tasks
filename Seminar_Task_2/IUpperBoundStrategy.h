@@ -12,7 +12,7 @@
 class IUpperBoundStrategy
 {
     public:
-        virtual int GetUpperBound(std::vector<int>& vVertex, std::vector<int>& vDeadlines, nMatrix& mTimes) = 0;
+        virtual int GetUpperBound(const std::vector<int>& vVertex, std::vector<int>& vDeadlines, nMatrix& mTimes) = 0;
 };
 
 

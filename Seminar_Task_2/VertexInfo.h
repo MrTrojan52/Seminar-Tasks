@@ -23,6 +23,39 @@ struct VertexInfo
     {
         return (nLowerBound == nUpperBound);
     };
+
+    bool operator==(VertexInfo& rhs)
+    {
+        bool bEqual = true;
+        if ((nUpperBound != rhs.nUpperBound)||
+            (nLowerBound != rhs.nLowerBound))
+        {
+            bEqual = false;
+        }
+
+        if (vVertex.size() != rhs.vVertex.size())
+        {
+            bEqual = false;
+        }
+        else
+        {
+            for (size_t i = 0; i < vVertex.size(); ++i)
+            {
+                if (vVertex[i] != rhs.vVertex[i])
+                {
+                    bEqual = false;
+                }
+            }
+        }
+
+        return bEqual;
+    }
+
+    bool operator!=(VertexInfo& rhs)
+    {
+        return !(*this == rhs);
+    }
+
 };
 
 #endif //SEMINAR_TASK_2_VERTEXINFO_H
