@@ -20,11 +20,9 @@
 class DeliveryTask
 {
     public:
-        explicit DeliveryTask(
-                                etBranchingStrategy eBranching = eBRANCHING_BASIC,
-                                etLowerBoundStrategy eLower = eLOWERBOUND_BASIC,
-                                etUpperBoundStrategy eUpper = eUPPERBOUND_BASIC
-                              );
+        DeliveryTask(etBranchingStrategy eBranching = eBRANCHING_BASIC,
+                     etLowerBoundStrategy eLower = eLOWERBOUND_BASIC,
+                     etUpperBoundStrategy eUpper = eUPPERBOUND_BASIC);
         void SetTasksPath(const std::string& sPath);
         void Solve();
         void SetBranchingStrategy(etBranchingStrategy eBranchingStrategy);

@@ -174,11 +174,9 @@ void DeliveryTask::UpdateBounds(VertexInfo& rVertex)
     UpdateRecord(rVertex);
 }
 
-DeliveryTask::DeliveryTask(
-                            etBranchingStrategy eBranching,
-                            etLowerBoundStrategy eLower,
-                            etUpperBoundStrategy eUpper
-                           )
+DeliveryTask::DeliveryTask(etBranchingStrategy eBranching,
+                           etLowerBoundStrategy eLower,
+                           etUpperBoundStrategy eUpper)
 : m_nTaskSize(0),
   m_nCount(0),
   m_viRecord({}, std::numeric_limits<int>::max(), std::numeric_limits<int>::max())

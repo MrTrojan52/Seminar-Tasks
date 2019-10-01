@@ -9,6 +9,7 @@
 #include "BaseUpperBoundStrategy.h"
 
 #include "CustomBranchingStrategy.h"
+#include "CustomUpperBoundStrategy.h"
 
 const DefaultFactory &DefaultFactory::Instance()
 {
@@ -64,7 +65,7 @@ std::unique_ptr<IUpperBoundStrategy> DefaultFactory::GetUpperBoundStrategy(etUpp
             pStrategy = std::make_unique<BaseUpperBoundStrategy>();
             break;
         case eUPPERBOUND_CUSTOM:
-            // TODO: add custom init
+            pStrategy = std::make_unique<CustomUpperBoundStrategy>();
             break;
         default:
             break;

@@ -13,6 +13,7 @@ set(
         BaseUpperBoundStrategy.cpp
         ABoundStrategy.cpp
         CustomBranchingStrategy.cpp
+        CustomUpperBoundStrategy.cpp
         BaseLogger.cpp
         HTMLLogger.cpp
 )
@@ -31,6 +32,7 @@ set(
         BaseUpperBoundStrategy.h
         ABoundStrategy.h
         CustomBranchingStrategy.h
+        CustomUpperBoundStrategy.h
         ILogger.h
         BaseLogger.h
         HTMLLogger.h
