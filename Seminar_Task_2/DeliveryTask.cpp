@@ -8,9 +8,11 @@
 #include <algorithm>
 #include <fstream>
 #include <limits>
+#include <iostream>
 
 #include "DeliveryTask.h"
 #include "DefaultFactory.h"
+#include "HTMLLogger.h"
 
 void DeliveryTask::SetTasksPath(const std::string &sPath)
 {
@@ -67,18 +69,48 @@ void DeliveryTask::Solve()
     {
         throw std::invalid_argument("Incorrect tasks location path.");
     }
+    int nTask = 0;
+    InitializeLoggerData();
+    double dAverage = 0.0f;
     for (auto& file : vFiles)
     {
+        ++nTask;
+        std::cout << "Task #" << nTask << std::endl;
+        std::vector<std::string> vRow;
+        vRow.push_back(std::to_string(nTask));
         PopulateTaskFromFile(file);
-        m_vVertexes.resize(m_nTaskSize);
-        for (size_t i = 0; i < m_nTaskSize; ++i)
+        if (IsUsedBasicStrategies())
         {
-            m_vVertexes[i] = VertexInfo({static_cast<int>(i + 1)});
+            FindSolution(false);
+            vRow.push_back(std::to_string(m_nCount));
         }
-        UpdateBounds();
-        DoBoundsAndTrees();
+        else
+        {
+            FindSolution(true);
+            int nBasic = m_nCount;
+            vRow.push_back(std::to_string(nBasic));
+
+            ClearVariables();
+            FindSolution(false);
+            PopulateRowForSolution(vRow, nBasic, m_nCount);
+            dAverage += (nBasic - (double)m_nCount) / (float)nBasic;
+        }
+        m_pLogger->AddRow(vRow);
     }
-    UpdateBounds();
+    // Add footer row for custom strategies
+    if (!IsUsedBasicStrategies())
+    {
+        if (!vFiles.empty())
+        {
+            dAverage /= vFiles.size();
+        }
+        else
+        {
+            dAverage = 0.0;
+        }
+        std::vector<std::string> vRow = {"Total", "", "", std::to_string(dAverage)};
+        m_pLogger->AddRow(vRow);
+    }
 }
 
 void DeliveryTask::PopulateTaskFromFile(const std::string &sFile)
@@ -119,11 +151,8 @@ void DeliveryTask::PopulateTaskFromFile(const std::string &sFile)
 void DeliveryTask::ClearTaskData()
 {
     m_nTaskSize = 0;
-    m_nCount = 0;
-    m_viRecord = VertexInfo({}, std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
     m_mTimes.clear();
     m_vDeadlines.clear();
-    m_vVertexes.clear();
 }
 
 void DeliveryTask::UpdateBounds()
@@ -157,7 +186,7 @@ DeliveryTask::DeliveryTask(
     SetBranchingStrategy(eBranching);
     SetLowerBoundStrategy(eLower);
     SetUpperBoundStrategy(eUpper);
-    m_nStep = 0;
+    m_pLogger = std::make_unique<HTMLLogger>(SAVE_HTML_DEFAULT_FILENAME);
 }
 
 void DeliveryTask::SetBranchingStrategy(etBranchingStrategy eBranchingStrategy)
@@ -184,7 +213,6 @@ void DeliveryTask::DoBoundsAndTrees()
     VertexInfo viVertex;
     while (true)
     {
-        m_nStep++;
         viVertex = m_pBranchingStrategy->Branching(m_vVertexes);
         AddVertexesAfterBranching(viVertex);
         if ((viVertex.vVertex.size() == m_nTaskSize) && viVertex.IsBoundsEqual())
@@ -202,6 +230,7 @@ void DeliveryTask::AddVertexesAfterBranching(VertexInfo& rVertex)
     {
         if (std::find(CONTAINER_BOUNDS(rVertex.vVertex), (i + 1)) == rVertex.vVertex.end())
         {
+            ++m_nCount;
             rVertex.vVertex.push_back((i + 1));
             UpdateBounds(rVertex);
             m_vVertexes.emplace_back(rVertex);
@@ -236,5 +265,71 @@ void DeliveryTask::UpdateRecord(VertexInfo& rVertex)
     {
         m_viRecord = rVertex;
     }
+}
+
+void DeliveryTask::PrintData()
+{
+    m_pLogger->PrintData();
+}
+
+void DeliveryTask::InitializeLoggerData()
+{
+    m_pLogger->AddHeader("#");
+    m_pLogger->AddHeader("BASIC");
+    if (!IsUsedBasicStrategies())
+    {
+        m_pLogger->AddHeader("CUSTOM");
+        m_pLogger->AddHeader("(BASIC - CUSTOM) / BASIC");
+    }
+
+}
+
+void DeliveryTask::PopulateRowForSolution(std::vector<std::string>& vRow, int nBasic, int nCustom)
+{
+    vRow.push_back(std::to_string(nCustom));
+    vRow.push_back(std::to_string((double)(nBasic - nCustom) / nBasic));
+}
+
+bool DeliveryTask::IsUsedBasicStrategies()
+{
+    return ((m_eBranchingStrategy == eBRANCHING_BASIC) &&
+            (m_eLowerBoundStrategy == eLOWERBOUND_BASIC) &&
+            (m_eUpperBoundStrategy == eUPPERBOUND_BASIC));
+}
+
+void DeliveryTask::FindSolution(bool bBaseForce)
+{
+    etBranchingStrategy eCurrentBranching = m_eBranchingStrategy;
+    etUpperBoundStrategy eCurrentUpper = m_eUpperBoundStrategy;
+    etLowerBoundStrategy eCurrentLower = m_eLowerBoundStrategy;
+
+    if (bBaseForce)
+    {
+        SetBranchingStrategy(eBRANCHING_BASIC);
+        SetUpperBoundStrategy(eUPPERBOUND_BASIC);
+        SetLowerBoundStrategy(eLOWERBOUND_BASIC);
+    }
+
+    m_vVertexes.resize(m_nTaskSize);
+    for (size_t i = 0; i < m_nTaskSize; ++i)
+    {
+        m_vVertexes[i] = VertexInfo({static_cast<int>(i + 1)});
+    }
+    UpdateBounds();
+    DoBoundsAndTrees();
+
+    if (bBaseForce)
+    {
+        SetBranchingStrategy(eCurrentBranching);
+        SetUpperBoundStrategy(eCurrentUpper);
+        SetLowerBoundStrategy(eCurrentLower);
+    }
+}
+
+void DeliveryTask::ClearVariables()
+{
+    m_nCount = 0;
+    m_viRecord = VertexInfo({}, std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
+    m_vVertexes.clear();
 }
 

@@ -12,6 +12,9 @@ set(
         BaseLowerBoundStrategy.cpp
         BaseUpperBoundStrategy.cpp
         ABoundStrategy.cpp
+        CustomBranchingStrategy.cpp
+        BaseLogger.cpp
+        HTMLLogger.cpp
 )
 
 set(
@@ -27,6 +30,10 @@ set(
         BaseLowerBoundStrategy.h
         BaseUpperBoundStrategy.h
         ABoundStrategy.h
+        CustomBranchingStrategy.h
+        ILogger.h
+        BaseLogger.h
+        HTMLLogger.h
 )
 
 add_executable(Seminar_Task_2 ${HEADERS} ${SOURCES})

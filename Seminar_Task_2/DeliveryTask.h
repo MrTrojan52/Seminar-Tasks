@@ -15,12 +15,13 @@
 #include "ILowerBoundStrategy.h"
 #include "IUpperBoundStrategy.h"
 #include "IBranchingStrategy.h"
+#include "ILogger.h"
 
 class DeliveryTask
 {
     public:
         explicit DeliveryTask(
-                                etBranchingStrategy eBranching = eBRANCHING_DEFAULT,
+                                etBranchingStrategy eBranching = eBRANCHING_BASIC,
                                 etLowerBoundStrategy eLower = eLOWERBOUND_BASIC,
                                 etUpperBoundStrategy eUpper = eUPPERBOUND_BASIC
                               );
@@ -29,6 +30,7 @@ class DeliveryTask
         void SetBranchingStrategy(etBranchingStrategy eBranchingStrategy);
         void SetLowerBoundStrategy(etLowerBoundStrategy eLowerBoundStrategy);
         void SetUpperBoundStrategy(etUpperBoundStrategy eUpperBoundStrategy);
+        void PrintData();
     private:
         [[nodiscard]] std::vector<std::string> ExtractFilesFromPath() const;
         void PopulateTaskFromFile(const std::string& sFile);
@@ -39,6 +41,11 @@ class DeliveryTask
         void ClipVertexes();
         void UpdateRecord(VertexInfo& rVertex);
         void DoBoundsAndTrees();
+        void InitializeLoggerData();
+        void PopulateRowForSolution(std::vector<std::string>& vRow, int nBasic, int nCustom);
+        bool IsUsedBasicStrategies();
+        void FindSolution(bool bBaseForce);
+        void ClearVariables();
 
         std::string m_sTasksPath;
         size_t m_nTaskSize;
@@ -47,11 +54,11 @@ class DeliveryTask
         std::vector<VertexInfo> m_vVertexes;
         size_t m_nCount;
         VertexInfo m_viRecord;
-        int m_nStep;
 
         std::unique_ptr<ILowerBoundStrategy> m_pLowerBoundStrategy;
         std::unique_ptr<IUpperBoundStrategy> m_pUpperBoundStrategy;
         std::unique_ptr<IBranchingStrategy> m_pBranchingStrategy;
+        std::unique_ptr<ILogger> m_pLogger;
 
         etBranchingStrategy m_eBranchingStrategy;
         etLowerBoundStrategy m_eLowerBoundStrategy;

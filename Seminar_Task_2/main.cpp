@@ -6,8 +6,9 @@
 int main()
 {
     std::string fsPath = std::filesystem::current_path().parent_path().string();
-    DeliveryTask Task;
-    Task.SetTasksPath(fsPath + "/Tests/task_2_05_n10.txt");
+    DeliveryTask Task(eBRANCHING_CUSTOM);
+    Task.SetTasksPath(fsPath + "/Tests/");
     Task.Solve();
+    Task.PrintData();
     return 0;
 }

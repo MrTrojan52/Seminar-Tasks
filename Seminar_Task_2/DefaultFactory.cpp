@@ -8,6 +8,8 @@
 #include "BaseLowerBoundStrategy.h"
 #include "BaseUpperBoundStrategy.h"
 
+#include "CustomBranchingStrategy.h"
+
 const DefaultFactory &DefaultFactory::Instance()
 {
     static DefaultFactory factory;
@@ -20,11 +22,11 @@ std::unique_ptr<IBranchingStrategy> DefaultFactory::GetBranchingStrategy(etBranc
 
     switch (eStrategy)
     {
-        case eBRANCHING_DEFAULT:
+        case eBRANCHING_BASIC:
             pStrategy = std::make_unique<BaseBranchingStrategy>();
             break;
         case eBRANCHING_CUSTOM:
-            // TODO: add custom init
+            pStrategy = std::make_unique<CustomBranchingStrategy>();
             break;
         default:
             break;
