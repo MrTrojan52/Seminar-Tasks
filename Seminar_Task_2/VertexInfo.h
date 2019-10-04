@@ -44,6 +44,7 @@ struct VertexInfo
                 if (vVertex[i] != rhs.vVertex[i])
                 {
                     bEqual = false;
+                    break;
                 }
             }
         }
