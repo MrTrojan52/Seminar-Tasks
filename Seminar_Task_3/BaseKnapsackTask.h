@@ -14,7 +14,7 @@
 class BaseKnapsackTask
 {
     public:
-        BaseKnapsackTask();
+        BaseKnapsackTask(const std::string& sTaskPath);
         void SetTasksPath(const std::string& sPath);
         void Solve();
         int GetCalculatedProfit() { return m_nCalculatedProfit; }

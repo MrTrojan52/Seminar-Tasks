@@ -5,8 +5,9 @@
 #include "GreedyKnapsackTask.h"
 
 
-GreedyKnapsackTask::GreedyKnapsackTask(etSORTING_STRATEGY eSortingStrategy)
-: m_nPercent(GREEDY_TASK_DEFAULT_PERCENT)
+GreedyKnapsackTask::GreedyKnapsackTask(const std::string& sTaskPath, etSORTING_STRATEGY eSortingStrategy)
+: BaseKnapsackTask(sTaskPath),
+  m_nPercent(GREEDY_TASK_DEFAULT_PERCENT)
 {
     SetSortingStrategy(eSortingStrategy);
 }

@@ -11,7 +11,7 @@
 class GreedyKnapsackTask : public BaseKnapsackTask
 {
     public:
-        explicit GreedyKnapsackTask(etSORTING_STRATEGY eSortingStrategy);
+        GreedyKnapsackTask(const std::string& sTaskPath, etSORTING_STRATEGY eSortingStrategy);
         void SetSortingStrategy(etSORTING_STRATEGY eStrategy);
         void SetPercent(int nPercent);
 

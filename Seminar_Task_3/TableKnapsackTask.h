@@ -14,8 +14,8 @@ typedef std::pair<int, int> wPosition;
 class TableKnapsackTask : public BaseKnapsackTask
 {
     public:
-        TableKnapsackTask()
-        : BaseKnapsackTask(),
+        explicit TableKnapsackTask(const std::string& sTaskPath)
+        : BaseKnapsackTask(sTaskPath),
           m_pPrevious(nullptr),
           m_pNext(nullptr)
         {}

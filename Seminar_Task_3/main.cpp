@@ -6,8 +6,7 @@
 
 int main() {
     std::string fsPath = std::filesystem::current_path().parent_path().string();
-    GreedyKnapsackTask task(BASE_SORTING);
-    task.SetTasksPath(fsPath + "/Tests/");
+    GreedyKnapsackTask task(fsPath + "/Tests/", BASE_SORTING);
     task.Solve();
     std::cout << task.GetCalculatedProfit() << std::endl;
     return 0;

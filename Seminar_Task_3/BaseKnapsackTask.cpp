@@ -7,12 +7,12 @@
 
 #include "BaseKnapsackTask.h"
 
-BaseKnapsackTask::BaseKnapsackTask()
+BaseKnapsackTask::BaseKnapsackTask(const std::string& sTaskPath)
 : m_nPerfomance(0),
   m_nNumberOfOrders(0),
   m_nCalculatedProfit(0)
 {
-
+    SetTasksPath(sTaskPath);
 }
 
 void BaseKnapsackTask::SetTasksPath(const std::string& sPath)
