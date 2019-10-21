@@ -1,0 +1,27 @@
+//
+// Created by trojan52.
+//
+
+#ifndef SEMINAR_TASK_3_DEFINITIONS_H
+#define SEMINAR_TASK_3_DEFINITIONS_H
+
+#define FILE_DEFAULT_EXTENSION          "txt"
+#define FILE_DEFAULT_FILENAME           "task"
+
+#define GREEDY_TASK_DEFAULT_PERCENT     100
+
+
+enum etTASK_TYPE
+{
+    GREEDY_TASK = 0,
+    RECURSIVE_TASK,
+    TABLE_TASK
+};
+
+enum etSORTING_STRATEGY
+{
+    BASE_SORTING = 0,
+    CUSTOM_SORTING
+};
+
+#endif //SEMINAR_TASK_3_DEFINITIONS_H
