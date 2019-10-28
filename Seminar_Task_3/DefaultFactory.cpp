@@ -4,6 +4,7 @@
 
 #include "DefaultFactory.h"
 #include "BasicSortingStrategy.h"
+#include "CustomSortingStrategy.h"
 
 const DefaultFactory& DefaultFactory::Instance()
 {
@@ -19,6 +20,10 @@ std::unique_ptr<ISortingStrategy> DefaultFactory::GetSortingStrategy(etSORTING_S
     {
         case BASE_SORTING:
             pStrategy = std::make_unique<BasicSortingStrategy>();
+            break;
+
+        case CUSTOM_SORTING:
+            pStrategy = std::make_unique<CustomSortingStrategy>();
             break;
 
         default:

@@ -13,6 +13,7 @@ set(
         BasicSortingStrategy.cpp
         TableKnapsackTask.cpp
         RecursiveKnapsackTask.cpp
+        CustomSortingStrategy.cpp
 )
 
 set(
@@ -26,6 +27,7 @@ set(
         BasicSortingStrategy.h
         TableKnapsackTask.h
         RecursiveKnapsackTask.h
+        CustomSortingStrategy.h
 )
 
 
