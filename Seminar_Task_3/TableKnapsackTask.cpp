@@ -4,44 +4,44 @@
 
 #include "TableKnapsackTask.h"
 
-void TableKnapsackTask::doSolve()
+void TableKnapsackTask::doSolve(int k)
 {
     PrepareTaskForSolving();
 
-    for (int k = 1; k < m_nNumberOfOrders; ++k)
+    for (int i = 1; i < k; ++i)
     {
         for (size_t nW = 0; nW <= m_nPerfomance; ++nW)
         {
             int nFirstFunc = (*m_pPrevious)[nW];
             int nSecondFunc = 0;
-            if (m_vOrders[k].m_nLaborInput <= nW)
+            if (m_vOrders[i].m_nLaborInput <= nW)
             {
-                nSecondFunc = m_vOrders[k].m_nProfit + (*m_pPrevious)[nW - m_vOrders[k].m_nLaborInput];
+                nSecondFunc = m_vOrders[i].m_nProfit + (*m_pPrevious)[nW - m_vOrders[i].m_nLaborInput];
                 if (nFirstFunc <= nSecondFunc)
                 {
                     (*m_pNext)[nW] = nSecondFunc;
-                    m_mXToWPositions[wPosition(nW, k)] = m_mXToWPositions[wPosition(nW - m_vOrders[k].m_nLaborInput, k - 1)];
-                    m_mXToWPositions[wPosition(nW, k)].push_back(true);
+                    m_mXToWPositions[wPosition(nW, i)] = m_mXToWPositions[wPosition(nW - m_vOrders[i].m_nLaborInput, i - 1)];
+                    m_mXToWPositions[wPosition(nW, i)].push_back(true);
                 }
                 else
                 {
                     (*m_pNext)[nW] = nFirstFunc;
-                    m_mXToWPositions[wPosition(nW, k)] = m_mXToWPositions[wPosition(nW, k - 1)];
-                    m_mXToWPositions[wPosition(nW, k)].push_back(false);
+                    m_mXToWPositions[wPosition(nW, i)] = m_mXToWPositions[wPosition(nW, i - 1)];
+                    m_mXToWPositions[wPosition(nW, i)].push_back(false);
                 }
             }
             else
             {
                 (*m_pNext)[nW] = nFirstFunc;
-                m_mXToWPositions[wPosition(nW, k)] = m_mXToWPositions[wPosition(nW, k - 1)];
-                m_mXToWPositions[wPosition(nW, k)].push_back(false);
+                m_mXToWPositions[wPosition(nW, i)] = m_mXToWPositions[wPosition(nW, i - 1)];
+                m_mXToWPositions[wPosition(nW, i)].push_back(false);
             }
         }
 
         std::swap(m_pPrevious, m_pNext);
     }
 
-    auto iterator = m_mXToWPositions.find(wPosition(m_nPerfomance, m_nNumberOfOrders - 1));
+    auto iterator = m_mXToWPositions.find(wPosition(m_nPerfomance, k - 1));
     if (iterator != m_mXToWPositions.end())
     {
         m_vbX = iterator->second;

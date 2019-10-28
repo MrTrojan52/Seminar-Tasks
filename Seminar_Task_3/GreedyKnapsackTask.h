@@ -13,15 +13,14 @@ class GreedyKnapsackTask : public BaseKnapsackTask
     public:
         GreedyKnapsackTask(const std::string& sTaskPath, etSORTING_STRATEGY eSortingStrategy);
         void SetSortingStrategy(etSORTING_STRATEGY eStrategy);
-        void SetPercent(int nPercent);
-
+        void SetPercent(double p) { m_dPercent = p; }
     protected:
-        void doSolve() override;
+        void doSolve(int k) override;
 
     private:
         std::unique_ptr<ISortingStrategy> m_pSortingStrategy;
         etSORTING_STRATEGY m_eSortingStrategy;
-        int m_nPercent;
+        double m_dPercent;
 };
 
 

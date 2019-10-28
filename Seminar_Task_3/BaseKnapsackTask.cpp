@@ -103,18 +103,30 @@ void BaseKnapsackTask::ClearTaskData()
     m_vbX.clear();
 }
 
-void BaseKnapsackTask::Solve()
+void BaseKnapsackTask::Solve(int k)
 {
     std::vector<std::string> vFiles = ExtractFilesFromPath();
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
 
     if (vFiles.empty())
     {
         throw std::invalid_argument("Incorrect tasks location path.");
     }
-
+    int nTask = 0;
     for (auto& file : vFiles)
     {
+        ++nTask;
+        int nCount = k;
         PopulateTaskFromFile(file);
-        doSolve();
+        if (nCount == USE_ALL_ORDERS)
+        {
+            nCount = m_nNumberOfOrders;
+        }
+        start = std::chrono::high_resolution_clock::now();
+        doSolve(nCount);
+        end = end = std::chrono::high_resolution_clock::now();
+        long calcTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        m_vTaskData.emplace_back(calcTime, m_nCalculatedProfit);
     }
 }

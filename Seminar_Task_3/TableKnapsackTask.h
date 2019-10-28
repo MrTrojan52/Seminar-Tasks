@@ -20,7 +20,7 @@ class TableKnapsackTask : public BaseKnapsackTask
           m_pNext(nullptr)
         {}
     protected:
-        void doSolve() override;
+        void doSolve(int k) override;
 
     private:
         void PrepareTaskForSolving();

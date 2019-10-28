@@ -16,12 +16,14 @@ class BaseKnapsackTask
     public:
         BaseKnapsackTask(const std::string& sTaskPath);
         void SetTasksPath(const std::string& sPath);
-        void Solve();
+        void Solve() { Solve(USE_ALL_ORDERS); };
+        void Solve(int k);
         int GetCalculatedProfit() { return m_nCalculatedProfit; }
         std::vector<bool> GetTakenOrders() { return m_vbX;}
+        std::vector<Task_OutputData> GetTaskData() { return m_vTaskData; }
 
     protected:
-        virtual void doSolve() = 0;
+        virtual void doSolve(int k) = 0;
         virtual void PopulateTaskFromFile(const std::string& sFile);
         virtual void ClearTaskData();
 
@@ -33,7 +35,7 @@ class BaseKnapsackTask
         std::vector<OrderInfo> m_vOrders;
         std::vector<bool> m_vbX;
         std::string m_sTasksPath;
-
+        std::vector<Task_OutputData> m_vTaskData;
 };
 
 

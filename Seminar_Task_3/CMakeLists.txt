@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.15)
 project(Seminar_Task_3)
 
 set(CMAKE_CXX_STANDARD 17)
-
+include_directories(./lib)
+add_library(fort_lib STATIC lib/fort.c)
 set(
         SOURCES
         main.cpp
@@ -11,6 +12,7 @@ set(
         GreedyKnapsackTask.cpp
         BasicSortingStrategy.cpp
         TableKnapsackTask.cpp
+        RecursiveKnapsackTask.cpp
 )
 
 set(
@@ -23,7 +25,9 @@ set(
         ISortingStrategy.h
         BasicSortingStrategy.h
         TableKnapsackTask.h
+        RecursiveKnapsackTask.h
 )
 
+
 add_executable(Seminar_Task_3 ${HEADERS} ${SOURCES})
-target_link_libraries(Seminar_Task_3 stdc++fs)
+target_link_libraries(Seminar_Task_3 stdc++fs fort_lib)
