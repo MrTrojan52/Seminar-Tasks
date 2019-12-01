@@ -10,6 +10,15 @@
 class CFlowNetwork
 {
     public:
+
+        ~CFlowNetwork()
+        {
+            for (int i = 0; i < m_pNodes.size(); ++i)
+            {
+                delete m_pNodes[i];
+            }
+        }
+
         void AddNode(CFlowNode* pNode)
         {
             m_pNodes.push_back(pNode);

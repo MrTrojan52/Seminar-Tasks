@@ -12,6 +12,14 @@ class CFlowNode
 {
     public:
 
+        ~CFlowNode()
+        {
+            for (int i = 0; i < m_vpForwardArcs.size(); ++i)
+            {
+                delete m_vpForwardArcs[i];
+                delete m_vpBackwardArcs[i];
+            }
+        }
         explicit CFlowNode(etNodeType eType = eUNDEFINED)
         : m_eNodeType(eType)
         { }
