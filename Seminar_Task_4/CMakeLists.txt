@@ -8,7 +8,7 @@ set(
         SOURCES
         Definitions.cpp
         main.cpp
-        FlowNetworkNode.cpp
+        FlowNode.cpp
         FlowNetwork.cpp
         SupplierTask.cpp
         FordFulkersonSolver.cpp
@@ -17,7 +17,8 @@ set(
 set(
         HEADERS
         Definitions.h
-        FlowNetworkNode.h
+        FlowArc.h
+        FlowNode.h
         FlowNetwork.h
         SupplierTask.h
         IFlowTaskSolver.h

@@ -12,6 +12,6 @@
 class IFlowTaskSolver
 {
     public:
-       virtual int SolveFlowTask(std::shared_ptr<CFlowNetwork> pNetwork) = 0;
+       virtual int SolveFlowTask(std::shared_ptr<CFlowNetwork> pNetwork, int nMaxFlow) = 0;
 };
 #endif //SEMINAR_TASK_4_IFLOWTASKSOLVER_H

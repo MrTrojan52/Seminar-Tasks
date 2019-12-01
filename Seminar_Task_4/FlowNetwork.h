@@ -5,28 +5,28 @@
 #ifndef SEMINAR_TASK_4_FLOWNETWORK_H
 #define SEMINAR_TASK_4_FLOWNETWORK_H
 
-#include "FlowNetworkNode.h"
+#include "FlowNode.h"
 
 class CFlowNetwork
 {
     public:
-        explicit CFlowNetwork(CFlowNetworkNode* pSource = nullptr, CFlowNetworkNode* pStock = nullptr)
-        : m_pSourceNode(pSource),
-          m_pStockNode(pStock)
-        { }
+        void AddNode(CFlowNode* pNode)
+        {
+            m_pNodes.push_back(pNode);
+        }
 
-        void SetSourceNode(CFlowNetworkNode* pSource);
+        CFlowNode* GetNodeByIndex(int nIndex)
+        {
+            return m_pNodes[nIndex];
+        }
 
-        void SetStockNode(CFlowNetworkNode* pStock);
+        int GetNodesCount()
+        {
+            return m_pNodes.size();
+        }
 
-        CFlowNetworkNode* GetSourceNode();
-
-        CFlowNetworkNode* GetStockNode();
-
-        int GetFlow();
     private:
-        CFlowNetworkNode* m_pSourceNode;
-        CFlowNetworkNode* m_pStockNode;
+        std::vector<CFlowNode*> m_pNodes;
 };
 
 

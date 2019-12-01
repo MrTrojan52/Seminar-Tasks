@@ -11,7 +11,17 @@
 class CFordFulkersonSolver : public IFlowTaskSolver
 {
     public:
-        int SolveFlowTask(std::shared_ptr<CFlowNetwork> pNetwork) override;
+        int SolveFlowTask(std::shared_ptr<CFlowNetwork> pNetwork, int nMaxFlow) override;
+
+
+    private:
+        std::vector<CFlowNode*> m_vWay;
+        std::vector<int> m_vMarks;
+        std::shared_ptr<CFlowNetwork> m_pNetwork;
+        int m_nMaxFlow;
+
+        std::vector<CFlowNode*> GetWay(std::vector<int>& vInd, int& rWeight);
+        std::vector<CFlowNode*> RecGetWay(std::vector<int>& vInd, int nNum);
 };
 
 

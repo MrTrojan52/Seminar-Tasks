@@ -22,6 +22,12 @@ class CSupplierTask
 
         void PopulateTaskFromFile(const std::string& sFile);
         virtual void SolveTask();
+
+        [[nodiscard]] int GetSolutionValue() const
+        {
+            return m_nSolution;
+        }
+
     protected:
         int m_nSuppliersCount;
         int m_nConsumersCount;
@@ -37,14 +43,11 @@ class CSupplierTask
         Matrix m_mConsumersUsedProductPerTact;
         SetsList m_slSuppliers;
 
-        // Network vectors
-        std::vector<CFlowNetworkNode*> m_vnSuppliersTotal;
-        std::vector<CFlowNetworkNode*> m_vnSuppliersPartial;
-        std::vector<CFlowNetworkNode*> m_vnConsumersPartial;
 
         void ClearTaskData();
         void ValidateTask() const;
         void CreateFlowNetwork();
+        int GetMaxFlow() const;
 };
 
 
