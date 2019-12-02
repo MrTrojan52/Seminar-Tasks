@@ -4,12 +4,12 @@
 
 #include "FordFulkersonSolver.h"
 #include <limits>
-int CFordFulkersonSolver::SolveFlowTask(std::shared_ptr<CFlowNetwork> pNetwork, int nMaxFlow)
+std::pair<bool, int> CFordFulkersonSolver::SolveFlowTask(std::shared_ptr<CFlowNetwork> pNetwork, TaskData Data)
 {
     m_pNetwork = pNetwork;
     m_nMaxFlow = 0;
     m_vWay.clear();
-
+    int nMaxFlow = Data.nMaxFlow;
     while (true)
     {
         int nWeight = std::numeric_limits<int>::max();
@@ -31,8 +31,7 @@ int CFordFulkersonSolver::SolveFlowTask(std::shared_ptr<CFlowNetwork> pNetwork, 
                 nCalcMaxFlow += arc->m_nWeight;
             }
 
-
-                return nCalcMaxFlow;
+            return {(nMaxFlow == nCalcMaxFlow), nCalcMaxFlow };
         }
         else
         {

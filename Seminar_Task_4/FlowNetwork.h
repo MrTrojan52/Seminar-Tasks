@@ -34,6 +34,22 @@ class CFlowNetwork
             return m_pNodes.size();
         }
 
+        void SaveNodes()
+        {
+            for (auto node : m_pNodes)
+            {
+                node->SaveArcs();
+            }
+        }
+
+        void RestoreNodes()
+        {
+            for (auto node : m_pNodes)
+            {
+                node->RestoreArcs();
+            }
+        }
+
     private:
         std::vector<CFlowNode*> m_pNodes;
 };

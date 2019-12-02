@@ -12,6 +12,8 @@ set(
         FlowNetwork.cpp
         SupplierTask.cpp
         FordFulkersonSolver.cpp
+        StoreSolver.cpp
+        AlgorithmFactory.cpp
 )
 
 set(
@@ -23,6 +25,8 @@ set(
         SupplierTask.h
         IFlowTaskSolver.h
         FordFulkersonSolver.h
+        StoreSolver.h
+        AlgorithmFactory.h
 )
 
 include_directories(${FORT_LIB_PATH})

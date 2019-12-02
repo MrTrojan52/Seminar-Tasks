@@ -43,9 +43,20 @@ class CFlowNode
             return m_eNodeType;
         }
 
+        void SaveArcs()
+        {
+            m_bSaveAddition = true;
+        }
+
+        void RestoreArcs();
+
     private:
         std::vector<CFlowArc*> m_vpForwardArcs;
         std::vector<CFlowArc*> m_vpBackwardArcs;
+
+        std::vector<CFlowArc*> m_vpForwardArcsToDelete;
+        std::vector<CFlowArc*> m_vpBackwardArcsToDelete;
+        bool m_bSaveAddition = false;
 
         etNodeType m_eNodeType;
 };

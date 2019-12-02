@@ -108,7 +108,7 @@ void CSupplierTask::ValidateTask() const
 void CSupplierTask::SolveTask()
 {
     CreateFlowNetwork();
-    m_nSolution = m_pSolver->SolveFlowTask(m_pFlowNetwork, GetMaxFlow());
+    m_nSolution = m_pSolver->SolveFlowTask(m_pFlowNetwork, GetTaskData()).second;
 }
 
 void CSupplierTask::CreateFlowNetwork()
@@ -205,4 +205,18 @@ int CSupplierTask::GetMaxFlow() const
     }
 
     return nMaxFlow;
+}
+
+TaskData CSupplierTask::GetTaskData() const
+{
+    TaskData Data;
+    Data.nSuppliersCount = m_nSuppliersCount;
+    Data.nConsumersCount = m_nConsumersCount;
+    Data.nTactsCount = m_nTactsCount;
+    Data.m_mSuppliersProductPerTact = &m_mSuppliersProductPerTact;
+    Data.m_mConsumersUsedProductPerTact = &m_mConsumersUsedProductPerTact;
+    Data.m_vSuppliersTotalProduct = &m_vSuppliersTotalProduct;
+    Data.nMaxFlow = GetMaxFlow();
+
+    return Data;
 }

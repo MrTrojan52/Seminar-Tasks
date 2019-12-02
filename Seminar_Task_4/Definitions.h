@@ -24,6 +24,12 @@ enum etNodeType
     eSTOCK
 };
 
+enum etAlgorithm
+{
+    eFORDFULKERSON =0,
+    eSTORE
+};
+
 typedef std::vector<std::vector<int>> Matrix;
 typedef std::vector<std::set<int>> SetsList;
 
@@ -33,5 +39,17 @@ typedef std::vector<std::set<int>> SetsList;
 
 std::vector<std::string> ExtractFilesFromPath(const std::string& sPath);
 
+
+struct TaskData
+{
+    int nSuppliersCount;
+    int nConsumersCount;
+    int nTactsCount;
+    int nMaxFlow;
+
+    const std::vector<int>* m_vSuppliersTotalProduct;
+    const Matrix* m_mSuppliersProductPerTact;
+    const Matrix* m_mConsumersUsedProductPerTact;
+};
 
 #endif //SEMINAR_TASK_4_DEFINITIONS_H

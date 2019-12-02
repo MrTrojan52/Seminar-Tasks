@@ -7,18 +7,21 @@
 
 #include "Definitions.h"
 #include "FordFulkersonSolver.h"
+#include "AlgorithmFactory.h"
 
 class CSupplierTask
 {
     public:
-        CSupplierTask()
+        explicit CSupplierTask(etAlgorithm eAlg = eFORDFULKERSON)
         : m_nSuppliersCount(-1),
           m_nConsumersCount(-1),
           m_nTactsCount(-1),
           m_nSolution(-1),
           m_nBandwidth(-1),
-          m_pSolver(new CFordFulkersonSolver)
-        { }
+          m_eAlg(eAlg)
+        {
+            m_pSolver = CAlgorithmFactory::Instance().GetAlgorithm(m_eAlg);
+        }
 
         void PopulateTaskFromFile(const std::string& sFile);
         virtual void SolveTask();
@@ -34,6 +37,10 @@ class CSupplierTask
         int m_nTactsCount;
         int m_nSolution;
         int m_nBandwidth;
+
+        etAlgorithm m_eAlg;
+
+        // TODO: Получать Network из другого класса
         std::shared_ptr<CFlowNetwork> m_pFlowNetwork;
         std::unique_ptr<IFlowTaskSolver> m_pSolver;
 
@@ -48,6 +55,8 @@ class CSupplierTask
         void ValidateTask() const;
         void CreateFlowNetwork();
         int GetMaxFlow() const;
+        TaskData GetTaskData() const;
+
 };
 
 

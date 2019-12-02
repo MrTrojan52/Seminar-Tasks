@@ -11,7 +11,7 @@
 class CFordFulkersonSolver : public IFlowTaskSolver
 {
     public:
-        int SolveFlowTask(std::shared_ptr<CFlowNetwork> pNetwork, int nMaxFlow) override;
+        std::pair<bool, int> SolveFlowTask(std::shared_ptr<CFlowNetwork> pNetwork, TaskData Data) override;
 
 
     private:
