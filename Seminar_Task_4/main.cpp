@@ -9,8 +9,8 @@ int main()
     #if (MANUAL_FILES_SELECTION)
         std::vector<std::string> vsFiles
         {
-            TASK_FILE("task_4_01_n2_m2_T2.txt"),
-            TASK_FILE("task_4_02_n2_m2_T2.txt")
+            //TASK_FILE("task_4_01_n2_m2_T2.txt"),
+            TASK_FILE("task_4_07_n30_m15_T12.txt")
         };
     #else
         std::vector<std::string> vsFiles = ExtractFilesFromPath("");
@@ -18,7 +18,7 @@ int main()
 
     for (auto& sFile : vsFiles)
     {
-        CSupplierTask task(eSTORE);
+        CSupplierTask task(eSORTINGMINSTORE);
         task.PopulateTaskFromFile(sFile);
         task.SolveTask();
         std::cout << task.GetSolutionValue() << std::endl;

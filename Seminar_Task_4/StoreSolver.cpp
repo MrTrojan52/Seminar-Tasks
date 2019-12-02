@@ -48,7 +48,6 @@ bool CStoreSolver::SolveCapTask(std::shared_ptr<CFlowNetwork>& pNetwork, TaskDat
     CFordFulkersonSolver alg;
     bool bRes = alg.SolveFlowTask(pNetwork, rData).first;
 
-    pNetwork->RestoreNodes();
-    pNetwork->RestoreWeights();
+    pNetwork->RestoreNetwork();
     return bRes;
 }

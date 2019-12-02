@@ -27,7 +27,9 @@ enum etNodeType
 enum etAlgorithm
 {
     eFORDFULKERSON =0,
-    eSTORE
+    eSTORE,
+    eBASEMINSTORE,
+    eSORTINGMINSTORE
 };
 
 typedef std::vector<std::vector<int>> Matrix;

@@ -58,6 +58,12 @@ class CFlowNetwork
             }
         }
 
+        void RestoreNetwork()
+        {
+            RestoreNodes();
+            RestoreWeights();
+        }
+
 
     private:
         std::vector<CFlowNode*> m_pNodes;
