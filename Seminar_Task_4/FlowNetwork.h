@@ -50,6 +50,15 @@ class CFlowNetwork
             }
         }
 
+        void RestoreWeights()
+        {
+            for (auto node : m_pNodes)
+            {
+                node->RestoreArcsWeights();
+            }
+        }
+
+
     private:
         std::vector<CFlowNode*> m_pNodes;
 };

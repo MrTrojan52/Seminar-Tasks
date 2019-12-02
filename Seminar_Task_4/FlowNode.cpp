@@ -64,3 +64,16 @@ void CFlowNode::RestoreArcs()
     m_vpForwardArcsToDelete.clear();
     m_vpBackwardArcsToDelete.clear();
 }
+
+void CFlowNode::RestoreArcsWeights()
+{
+    for (auto arc : m_vpForwardArcs)
+    {
+        arc->RestoreWeight();
+    }
+
+    for (auto arc : m_vpBackwardArcs)
+    {
+        arc->RestoreWeight();
+    }
+}

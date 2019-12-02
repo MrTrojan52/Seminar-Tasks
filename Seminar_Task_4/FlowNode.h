@@ -50,6 +50,8 @@ class CFlowNode
 
         void RestoreArcs();
 
+        void RestoreArcsWeights();
+
     private:
         std::vector<CFlowArc*> m_vpForwardArcs;
         std::vector<CFlowArc*> m_vpBackwardArcs;

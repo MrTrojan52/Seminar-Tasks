@@ -29,7 +29,6 @@ std::pair<bool, int> CStoreSolver::SolveFlowTask(std::shared_ptr<CFlowNetwork> p
 
 bool CStoreSolver::SolveCapTask(std::shared_ptr<CFlowNetwork>& pNetwork, TaskData& rData, int nStoreCap)
 {
-    // TODO: NEED TO RESTORE NETWORK WEIGHTS TOO
     pNetwork->SaveNodes();
 
     for (int i = 0; i < rData.nConsumersCount; ++i)
@@ -50,5 +49,6 @@ bool CStoreSolver::SolveCapTask(std::shared_ptr<CFlowNetwork>& pNetwork, TaskDat
     bool bRes = alg.SolveFlowTask(pNetwork, rData).first;
 
     pNetwork->RestoreNodes();
+    pNetwork->RestoreWeights();
     return bRes;
 }

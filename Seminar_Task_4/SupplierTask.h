@@ -39,8 +39,7 @@ class CSupplierTask
         int m_nBandwidth;
 
         etAlgorithm m_eAlg;
-
-        // TODO: Получать Network из другого класса
+        
         std::shared_ptr<CFlowNetwork> m_pFlowNetwork;
         std::unique_ptr<IFlowTaskSolver> m_pSolver;
 
