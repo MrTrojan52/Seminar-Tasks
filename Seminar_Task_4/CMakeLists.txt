@@ -8,20 +8,29 @@ set(
         SOURCES
         Definitions.cpp
         main.cpp
-        FlowNetworkNode.cpp
+        FlowNode.cpp
         FlowNetwork.cpp
         SupplierTask.cpp
         FordFulkersonSolver.cpp
+        StoreSolver.cpp
+        AlgorithmFactory.cpp
+        BaseMinStoreSolver.cpp
+        SortingMinStoreSolver.cpp
 )
 
 set(
         HEADERS
         Definitions.h
-        FlowNetworkNode.h
+        FlowArc.h
+        FlowNode.h
         FlowNetwork.h
         SupplierTask.h
         IFlowTaskSolver.h
         FordFulkersonSolver.h
+        StoreSolver.h
+        AlgorithmFactory.h
+        BaseMinStoreSolver.h
+        SortingMinStoreSolver.h
 )
 
 include_directories(${FORT_LIB_PATH})

@@ -5,28 +5,68 @@
 #ifndef SEMINAR_TASK_4_FLOWNETWORK_H
 #define SEMINAR_TASK_4_FLOWNETWORK_H
 
-#include "FlowNetworkNode.h"
+#include "FlowNode.h"
 
 class CFlowNetwork
 {
     public:
-        explicit CFlowNetwork(CFlowNetworkNode* pSource = nullptr, CFlowNetworkNode* pStock = nullptr)
-        : m_pSourceNode(pSource),
-          m_pStockNode(pStock)
-        { }
 
-        void SetSourceNode(CFlowNetworkNode* pSource);
+        ~CFlowNetwork()
+        {
+            for (int i = 0; i < m_pNodes.size(); ++i)
+            {
+                delete m_pNodes[i];
+            }
+        }
 
-        void SetStockNode(CFlowNetworkNode* pStock);
+        void AddNode(CFlowNode* pNode)
+        {
+            m_pNodes.push_back(pNode);
+        }
 
-        CFlowNetworkNode* GetSourceNode();
+        CFlowNode* GetNodeByIndex(int nIndex)
+        {
+            return m_pNodes[nIndex];
+        }
 
-        CFlowNetworkNode* GetStockNode();
+        int GetNodesCount()
+        {
+            return m_pNodes.size();
+        }
 
-        int GetFlow();
+        void SaveNodes()
+        {
+            for (auto node : m_pNodes)
+            {
+                node->SaveArcs();
+            }
+        }
+
+        void RestoreNodes()
+        {
+            for (auto node : m_pNodes)
+            {
+                node->RestoreArcs();
+            }
+        }
+
+        void RestoreWeights()
+        {
+            for (auto node : m_pNodes)
+            {
+                node->RestoreArcsWeights();
+            }
+        }
+
+        void RestoreNetwork()
+        {
+            RestoreNodes();
+            RestoreWeights();
+        }
+
+
     private:
-        CFlowNetworkNode* m_pSourceNode;
-        CFlowNetworkNode* m_pStockNode;
+        std::vector<CFlowNode*> m_pNodes;
 };
 
 

@@ -108,42 +108,115 @@ void CSupplierTask::ValidateTask() const
 void CSupplierTask::SolveTask()
 {
     CreateFlowNetwork();
-    m_nSolution = m_pSolver->SolveFlowTask(m_pFlowNetwork);
+    m_nSolution = m_pSolver->SolveFlowTask(m_pFlowNetwork, GetTaskData()).second;
 }
 
 void CSupplierTask::CreateFlowNetwork()
 {
     m_pFlowNetwork.reset(new CFlowNetwork);
-    m_pFlowNetwork->SetSourceNode(new CFlowNetworkNode(eSOURCE));
-    m_pFlowNetwork->SetStockNode(new CFlowNetworkNode(eSTOCK));
 
-    m_vnSuppliersTotal.reserve(m_nSuppliersCount);
+    m_pFlowNetwork->AddNode(new CFlowNode(eSOURCE));
+
+
+    // Suppliers
     for (int i = 0; i < m_nSuppliersCount; ++i)
     {
-        m_vnSuppliersTotal.emplace_back(new CFlowNetworkNode(eSUPPLIER));
+       m_pFlowNetwork->AddNode(new CFlowNode(eSUPPLIER));
+       auto pFArc = new CFlowArc(0, (i + 1), m_vSuppliersTotalProduct[i]);
+       auto pBArc = new CFlowArc((i + 1), 0, 0);
+       m_pFlowNetwork->GetNodeByIndex(0)->AddArc(pFArc, pBArc);
+       m_pFlowNetwork->GetNodeByIndex(i + 1)->AddArc(pBArc, pFArc);
     }
 
-    m_vnSuppliersPartial.reserve(m_nSuppliersCount * m_nTactsCount);
+    // Suppliers per tact
+
     for (int i = 0; i < m_nSuppliersCount; ++i)
     {
         for (int t = 0; t < m_nTactsCount; ++t)
         {
-            m_vnSuppliersPartial.emplace_back(new CFlowNetworkNode(eSUPPLIER_PARTIAL));
-            m_vnSuppliersTotal[i]->AddChild(m_vnSuppliersPartial.back(), m_mSuppliersProductPerTact[i][t]);
+            int nFrom = i + 1;
+            int nTo = m_nSuppliersCount + m_nTactsCount * i + t + 1;
+            m_pFlowNetwork->AddNode(new CFlowNode(eSUPPLIER_PARTIAL));
+            auto pFArc = new CFlowArc(nFrom, nTo, m_mSuppliersProductPerTact[i][t]);
+            auto pBArc = new CFlowArc(nTo, nFrom, 0);
+            m_pFlowNetwork->GetNodeByIndex(nFrom)->AddArc(pFArc, pBArc);
+            m_pFlowNetwork->GetNodeByIndex(nTo)->AddArc(pBArc, pFArc);
         }
     }
 
-    m_vnConsumersPartial.reserve(m_nConsumersCount * m_nTactsCount);
+    // Consumers
+
     for (int i = 0; i < m_nConsumersCount; ++i)
     {
         for (int t = 0; t < m_nTactsCount; ++t)
         {
-            m_vnConsumersPartial.emplace_back(new CFlowNetworkNode(eCONSUMER_PARTIAL));
-            for (int avsupp : m_slSuppliers[i])
-            {
-                m_vnSuppliersPartial[(avsupp - 1) * m_nTactsCount + t]->AddChild(m_vnConsumersPartial.back(), m_nBandwidth);
-            }
-            m_vnConsumersPartial.back()->AddChild(m_pFlowNetwork->GetStockNode(), m_mConsumersUsedProductPerTact[i][t]);
+            m_pFlowNetwork->AddNode(new CFlowNode(eCONSUMER_PARTIAL));
         }
     }
+
+    for (int i = 0; i < m_nConsumersCount; ++i)
+    {
+        for (int t = 0; t < m_nTactsCount; ++t)
+        {
+            for (auto suppl : m_slSuppliers[i])
+            {
+                int nNum = m_nSuppliersCount * m_nTactsCount + m_nSuppliersCount + 1;
+                int nFrom = m_nSuppliersCount + m_nTactsCount * (suppl - 1) + t + 1;
+                int nTo = nNum + m_nTactsCount * i + t;
+
+                auto pFArc = new CFlowArc(nFrom, nTo, m_mSuppliersProductPerTact[suppl - 1][t]);
+                auto pBArc = new CFlowArc(nTo, nFrom, 0);
+
+                m_pFlowNetwork->GetNodeByIndex(nFrom)->AddArc(pFArc, pBArc);
+                m_pFlowNetwork->GetNodeByIndex(nTo)->AddArc(pBArc, pFArc);
+            }
+        }
+    }
+
+    // Stock
+
+    m_pFlowNetwork->AddNode(new CFlowNode(eSTOCK));
+    for (int i = 0; i < m_nConsumersCount; ++i)
+    {
+        for (int t = 0; t < m_nTactsCount; ++t)
+        {
+            int nFrom = m_nSuppliersCount * m_nTactsCount + m_nSuppliersCount + 1 + m_nTactsCount * i + t;
+            int nTo = m_pFlowNetwork->GetNodesCount() - 1;
+
+            auto pFArc = new CFlowArc(nFrom, nTo, m_mConsumersUsedProductPerTact[i][t]);
+            auto pBArc = new CFlowArc(nTo, nFrom, 0);
+
+            m_pFlowNetwork->GetNodeByIndex(nFrom)->AddArc(pFArc, pBArc);
+            m_pFlowNetwork->GetNodeByIndex(nTo)->AddArc(pBArc, pFArc);
+        }
+    }
+
+}
+
+int CSupplierTask::GetMaxFlow() const
+{
+    int nMaxFlow = 0;
+    for (int i = 0; i < m_nConsumersCount; ++i)
+    {
+        for (int t = 0; t < m_nTactsCount; ++t)
+        {
+            nMaxFlow += m_mConsumersUsedProductPerTact[i][t];
+        }
+    }
+
+    return nMaxFlow;
+}
+
+TaskData CSupplierTask::GetTaskData() const
+{
+    TaskData Data;
+    Data.nSuppliersCount = m_nSuppliersCount;
+    Data.nConsumersCount = m_nConsumersCount;
+    Data.nTactsCount = m_nTactsCount;
+    Data.m_mSuppliersProductPerTact = &m_mSuppliersProductPerTact;
+    Data.m_mConsumersUsedProductPerTact = &m_mConsumersUsedProductPerTact;
+    Data.m_vSuppliersTotalProduct = &m_vSuppliersTotalProduct;
+    Data.nMaxFlow = GetMaxFlow();
+
+    return Data;
 }
