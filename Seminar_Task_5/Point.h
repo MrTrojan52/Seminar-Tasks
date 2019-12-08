@@ -25,8 +25,13 @@ namespace TSP
 
         [[nodiscard]] double DistanceTo(const CPoint& rhs) const
         {
-            double dX = m_X - rhs.m_X;
-            double dY = m_Y - rhs.m_Y;
+            return DistanceBetween(*this, rhs);
+        }
+
+        static double DistanceBetween(const CPoint& lhs, const CPoint& rhs)
+        {
+            double dX = lhs.m_X - rhs.m_X;
+            double dY = lhs.m_Y - rhs.m_Y;
             return sqrt((dX * dX) + (dY * dY));
         }
 

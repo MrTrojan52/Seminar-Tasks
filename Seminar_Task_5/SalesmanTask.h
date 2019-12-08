@@ -13,6 +13,20 @@
 
 namespace TSP
 {
+    struct ClusterDistance
+    {
+        explicit ClusterDistance(double dist = 0, int nFirst = INCORRECT_VALUE, int nSecond = INCORRECT_VALUE)
+        : Distance(dist),
+          nFirstId(nFirst),
+          nSecondId(nSecond)
+        { }
+
+        double Distance;
+        int nFirstId;
+        int nSecondId;
+    };
+
+
     class SalesmanTask
     {
         public:
@@ -27,16 +41,25 @@ namespace TSP
                 m_vCities.push_back(newCity);
             }
 
-            size_t CitiesCount()
+            [[nodiscard]] size_t CitiesCount() const
             {
                 return m_vCities.size();
             }
+
+            double GetLen() const;
 
         private:
             void Greedy();
             [[nodiscard]] SubTaskList Reduction(int nAlpha);
             void Restoration(SubTaskList SubTasks);
             void SetReductionStrategy(etREDUCTION eReduction);
+            [[nodiscard]] std::shared_ptr<Permutation> SolveExternalTask(const SubTaskList& rSubTasks);
+            [[nodiscard]] CPoint CenterPoint();
+            [[nodiscard]] ClusterDistance GetMinDistanceToCluster(const SalesmanTask& rhs) const;
+            [[nodiscard]] int FindCityIndexByNumber(int nNumber) const;
+            static int FindPermutationIndexInTask(const SalesmanTask& rTask, int index);
+            void FillIndexPair(int pIndexes[2], const SalesmanTask& rTask, int nIndex) const;
+            void AddLoopToTaskPermutation(SalesmanTask& rTask, int nIndexStart, int nIndexEnd);
 
             std::vector<CCity> m_vCities;
             Permutation m_vPermutation;

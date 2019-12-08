@@ -22,8 +22,10 @@ enum etREDUCTION
 namespace TSP
 {
     class SalesmanTask;
+    struct CPoint;
     using SubTaskList = std::shared_ptr<std::vector<SalesmanTask>>;
     using ClusterList = std::vector<std::vector<int>>;
+    using PointList = std::vector<CPoint>;
     using Permutation = std::vector<int>;
 }
 

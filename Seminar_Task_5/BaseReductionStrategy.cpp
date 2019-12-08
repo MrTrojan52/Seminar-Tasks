@@ -91,7 +91,7 @@ ClusterList CBaseReductionStrategy::GetClusters(const std::vector<CCity> &rCitie
                 break;
             }
 
-            double dDist = rCities[i].DistanceTo(rCities[j]);
+            double dDist = rCities[i].DistanceTo(rCities[rCenters[j]]);
             if (dDist < dMin)
             {
                 dMin = dDist;
