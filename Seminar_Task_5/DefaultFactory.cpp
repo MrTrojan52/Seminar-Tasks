@@ -3,7 +3,7 @@
 //
 
 #include "DefaultFactory.h"
-#include "BaseReductionStrategy.h"
+#include "CenterRecalculationStrategy.h"
 
 const CDefaultFactory &CDefaultFactory::Instance()
 {
@@ -19,6 +19,10 @@ std::unique_ptr<IReductionStrategy> CDefaultFactory::GetReductionStrategy(etREDU
     {
         case eDEFAULT_REDUCTION:
             pStrategy = std::make_unique<CBaseReductionStrategy>();
+            break;
+
+        case eCENTER_RECALC_REDUCTION:
+            pStrategy = std::make_unique<CCenterRecalculationStrategy>();
             break;
 
         default:

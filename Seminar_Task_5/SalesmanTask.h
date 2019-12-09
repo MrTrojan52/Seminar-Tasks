@@ -46,8 +46,7 @@ namespace TSP
                 return m_vCities.size();
             }
 
-            double GetLen() const;
-
+            [[nodiscard]] double GetLen() const;
         private:
             void Greedy();
             [[nodiscard]] SubTaskList Reduction(int nAlpha);
@@ -65,7 +64,6 @@ namespace TSP
             Permutation m_vPermutation;
             etREDUCTION m_eReductionStrategy = eDEFAULT_REDUCTION;
             std::unique_ptr<IReductionStrategy> m_pReductionStrategy;
-
     };
 
 

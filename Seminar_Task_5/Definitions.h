@@ -15,7 +15,9 @@ const int INCORRECT_VALUE = -1;
 
 enum etREDUCTION
 {
-    eDEFAULT_REDUCTION = 0
+    eUNDEFINED_REDUCTION = -1,
+    eDEFAULT_REDUCTION = 0,
+    eCENTER_RECALC_REDUCTION
 };
 
 
@@ -23,8 +25,11 @@ namespace TSP
 {
     class SalesmanTask;
     struct CPoint;
+    struct Cluster;
+    struct CenteredCluster;
     using SubTaskList = std::shared_ptr<std::vector<SalesmanTask>>;
-    using ClusterList = std::vector<std::vector<int>>;
+    using ClusterList = std::vector<std::shared_ptr<Cluster>>;
+    using CenteredClusterList = std::vector<CenteredCluster>;
     using PointList = std::vector<CPoint>;
     using Permutation = std::vector<int>;
 }

@@ -12,11 +12,11 @@ class CBaseReductionStrategy : public IReductionStrategy
     public:
         [[nodiscard]] SubTaskList Reduction(const std::vector<CCity>& rCities, int nAlpha) const override;
 
-    private:
+    protected:
         [[nodiscard]] std::pair<int, int> Get2DistantPoints(const std::vector<CCity>& rCities) const;
         [[nodiscard]] std::vector<int> GetCenters(const std::vector<CCity>& rCities, std::vector<int> vCenters, int nAlpha) const;
-        [[nodiscard]] ClusterList GetClusters(const std::vector<CCity>& rCities, const std::vector<int>& rCenters) const;
-        [[nodiscard]] SubTaskList GetSubTasks(const std::vector<CCity>& rCities, const ClusterList& rClusters) const;
+        [[nodiscard]] virtual ClusterList GetClusters(const std::vector<CCity>& rCities, const std::vector<int>& rCenters) const;
+        [[nodiscard]] virtual SubTaskList GetSubTasks(const std::vector<CCity>& rCities, const ClusterList& rClusters) const;
 };
 
 

@@ -4,15 +4,18 @@
 
 #include "BaseReductionStrategy.h"
 #include "SalesmanTask.h"
+#include "Cluster.h"
+
 
 SubTaskList CBaseReductionStrategy::Reduction(const std::vector<CCity> &rCities, int nAlpha) const
 {
     auto Points = Get2DistantPoints(rCities);
     auto vCenters = GetCenters(rCities,{Points.first, Points.second}, nAlpha);
-    ClusterList clusters = GetClusters(rCities, vCenters);
+    auto clusters = GetClusters(rCities, vCenters);
 
     return GetSubTasks(rCities, clusters);
 }
+
 
 std::pair<int, int> CBaseReductionStrategy::Get2DistantPoints(const std::vector<CCity> &rCities) const
 {
@@ -36,6 +39,7 @@ std::pair<int, int> CBaseReductionStrategy::Get2DistantPoints(const std::vector<
     }
     return PointsIndexes;
 }
+
 
 std::vector<int> CBaseReductionStrategy::GetCenters(const std::vector<CCity>& rCities, std::vector<int> vCenters, int nAlpha) const
 {
@@ -76,6 +80,10 @@ std::vector<int> CBaseReductionStrategy::GetCenters(const std::vector<CCity>& rC
 ClusterList CBaseReductionStrategy::GetClusters(const std::vector<CCity> &rCities, const std::vector<int>& rCenters) const
 {
     ClusterList Clusters(rCenters.size());
+    for (int i = 0; i < rCenters.size(); ++i)
+    {
+        Clusters[i] = std::make_shared<Cluster>();
+    }
 
     for (size_t i = 0; i < rCities.size(); ++i)
     {
@@ -98,7 +106,7 @@ ClusterList CBaseReductionStrategy::GetClusters(const std::vector<CCity> &rCitie
                 nNearestCenter = j;
             }
         }
-        Clusters[nNearestCenter].push_back(i);
+        Clusters[nNearestCenter]->vCitiesIds.push_back(i);
     }
 
     return Clusters;
@@ -112,7 +120,7 @@ SubTaskList CBaseReductionStrategy::GetSubTasks(const std::vector<CCity> &rCitie
     for (auto& cluster : rClusters)
     {
         SubTasks->emplace_back(SalesmanTask());
-        for (int cityIndex : cluster)
+        for (int cityIndex : cluster->vCitiesIds)
         {
             SubTasks->back().AddCity(rCities[cityIndex]);
         }

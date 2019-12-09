@@ -10,6 +10,7 @@ set(
         SalesmanTask.cpp
         BaseReductionStrategy.cpp
         DefaultFactory.cpp
+        CenterRecalculationStrategy.cpp
 )
 
 set(
@@ -21,6 +22,8 @@ set(
         IReductionStrategy.h
         BaseReductionStrategy.h
         DefaultFactory.h
+        CenterRecalculationStrategy.h
+        Cluster.h
 )
 
 
