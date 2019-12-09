@@ -16,12 +16,17 @@ TSP::SalesmanTask::SalesmanTask(std::vector<CCity> vCities)
 
 void TSP::SalesmanTask::PopulateTaskFromFile(const std::string &sFileName)
 {
+    m_vCities.clear();
+    ClearData();
+
     std::ifstream iFile(sFileName);
 
     if (iFile.is_open())
     {
         int nSize;
         iFile >> nSize;
+
+        iFile >> m_dKnownOptimum;
 
         int nNum;
         CPoint Location;
@@ -386,4 +391,10 @@ double SalesmanTask::GetLen() const
 
     dLen += m_vCities[m_vPermutation.back()].DistanceTo(m_vCities[m_vPermutation[0]]);
     return dLen;
+}
+
+void SalesmanTask::ClearData()
+{
+    m_vPermutation.clear();
+    m_dKnownOptimum = 0.0;
 }

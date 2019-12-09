@@ -2,10 +2,11 @@ cmake_minimum_required(VERSION 3.15)
 project(Seminar_Task_5)
 
 set(CMAKE_CXX_STANDARD 17)
-set(FORT_LIB_PATH "../Seminar_Task_3/lib")
+set(FORT_LIB_PATH "./lib")
 
 set(
         SOURCES
+        Definitions.cpp
         main.cpp
         SalesmanTask.cpp
         BaseReductionStrategy.cpp

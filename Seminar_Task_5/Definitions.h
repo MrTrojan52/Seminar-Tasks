@@ -6,6 +6,8 @@
 #define SEMINAR_TASK_5_DEFINITIONS_H
 
 #include <memory>
+#include <vector>
+
 const int DEFAULT_ALPHA = 10;
 const int DEFAULT_BETA = 3;
 const int MAX_TASK_SIZE_FOR_GREEDY_SOLVE = 3;
@@ -20,6 +22,7 @@ enum etREDUCTION
     eCENTER_RECALC_REDUCTION
 };
 
+std::string GetReductionNameByEnum(etREDUCTION eReduction);
 
 namespace TSP
 {
