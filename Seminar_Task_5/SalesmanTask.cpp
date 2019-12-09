@@ -46,12 +46,12 @@ void TSP::SalesmanTask::Solve(int nAlpha, int nBeta, etREDUCTION eReduction)
 
     m_eReductionStrategy = eReduction;
     SubTaskList SubTasks;
-    if ((m_vCities.size() > nAlpha) && (nBeta > 0))
+    if ((m_vCities.size() > MAX_TASK_SIZE_FOR_GREEDY_SOLVE) && (nBeta > 0))
     {
         SubTasks = Reduction(nAlpha);
         for (auto& task : (*SubTasks))
         {
-            task.Solve(nAlpha, nBeta - 1);
+            task.Solve(nAlpha, nBeta - 1, eReduction);
         }
     }
     else

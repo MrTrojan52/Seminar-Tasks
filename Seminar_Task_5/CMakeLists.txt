@@ -12,6 +12,8 @@ set(
         BaseReductionStrategy.cpp
         DefaultFactory.cpp
         CenterRecalculationStrategy.cpp
+        MinClusterDistanceStrategy.cpp
+        Cluster.cpp
 )
 
 set(
@@ -25,6 +27,7 @@ set(
         DefaultFactory.h
         CenterRecalculationStrategy.h
         Cluster.h
+        MinClusterDistanceStrategy.h
 )
 
 

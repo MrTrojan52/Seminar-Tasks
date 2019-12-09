@@ -6,18 +6,17 @@
 #define SEMINAR_TASK_5_CLUSTER_H
 
 #include <vector>
-#include "Point.h"
+#include "City.h"
 
 namespace TSP
 {
     struct Cluster
     {
+        double CalcAverageDistance(const std::vector<CCity>& rCities);
+        double CalcAverageDistanceWithIndex(int nAddedIndex, const std::vector<CCity>& rCities);
         std::vector<int> vCitiesIds;
-    };
-
-    struct CenteredCluster : public Cluster
-    {
         CPoint pCenter;
+        double dAvgDistance;
     };
 
 }

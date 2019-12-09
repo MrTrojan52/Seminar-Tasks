@@ -10,7 +10,7 @@
 
 const int DEFAULT_ALPHA = 10;
 const int DEFAULT_BETA = 3;
-const int MAX_TASK_SIZE_FOR_GREEDY_SOLVE = 3;
+const int MAX_TASK_SIZE_FOR_GREEDY_SOLVE = 10;
 
 const int INCORRECT_VALUE = -1;
 
@@ -19,7 +19,8 @@ enum etREDUCTION
 {
     eUNDEFINED_REDUCTION = -1,
     eDEFAULT_REDUCTION = 0,
-    eCENTER_RECALC_REDUCTION
+    eCENTER_RECALC_REDUCTION,
+    eMIN_DISTANCE_IN_CLUSTERS
 };
 
 std::string GetReductionNameByEnum(etREDUCTION eReduction);
@@ -29,10 +30,8 @@ namespace TSP
     class SalesmanTask;
     struct CPoint;
     struct Cluster;
-    struct CenteredCluster;
     using SubTaskList = std::shared_ptr<std::vector<SalesmanTask>>;
     using ClusterList = std::vector<std::shared_ptr<Cluster>>;
-    using CenteredClusterList = std::vector<CenteredCluster>;
     using PointList = std::vector<CPoint>;
     using Permutation = std::vector<int>;
 }
