@@ -4,7 +4,8 @@
 - [x] [Cutting stock problem](/Seminar_Task_1)
 - [x] [Delivery problem](/Seminar_Task_2)
 - [x] [Knapsack problem](/Seminar_Task_3)
-
+- [x] [Max Flow problem](/Seminar_Task_4)
+- [x] [Salesman problem](/Seminar_Task_5)
 
 
 ***
