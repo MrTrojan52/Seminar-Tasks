@@ -217,6 +217,6 @@ TaskData CSupplierTask::GetTaskData() const
     Data.m_mConsumersUsedProductPerTact = &m_mConsumersUsedProductPerTact;
     Data.m_vSuppliersTotalProduct = &m_vSuppliersTotalProduct;
     Data.nMaxFlow = GetMaxFlow();
-
+    Data.nU = std::accumulate(m_vSuppliersTotalProduct.begin(), m_vSuppliersTotalProduct.end(), 0);
     return Data;
 }

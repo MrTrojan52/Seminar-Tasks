@@ -4,7 +4,8 @@
 
 #include "AlgorithmFactory.h"
 #include "FordFulkersonSolver.h"
-#include "StoreSolver.h"
+#include "EverybodyHasStorageSolver.h"
+#include "MinSizeStoreSolver.h"
 #include "BaseMinStoreSolver.h"
 #include "SortingMinStoreSolver.h"
 
@@ -24,8 +25,12 @@ std::unique_ptr<IFlowTaskSolver> CAlgorithmFactory::GetAlgorithm(etAlgorithm eAl
             pAlg = std::make_unique<CFordFulkersonSolver>();
             break;
 
-        case eSTORE:
-            pAlg = std::make_unique<CStoreSolver>();
+        case eEVERYBODY:
+            pAlg = std::make_unique<CEverybodyHasStorageSolver>();
+            break;
+
+        case eMINSIZESTORE:
+            pAlg = std::make_unique<CMinSizeStoreSolver>();
             break;
 
         case eBASEMINSTORE:

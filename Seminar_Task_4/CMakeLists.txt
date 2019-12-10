@@ -12,10 +12,11 @@ set(
         FlowNetwork.cpp
         SupplierTask.cpp
         FordFulkersonSolver.cpp
-        StoreSolver.cpp
+        MinSizeStoreSolver.cpp
         AlgorithmFactory.cpp
         BaseMinStoreSolver.cpp
         SortingMinStoreSolver.cpp
+        EverybodyHasStorageSolver.cpp
 )
 
 set(
@@ -27,10 +28,11 @@ set(
         SupplierTask.h
         IFlowTaskSolver.h
         FordFulkersonSolver.h
-        StoreSolver.h
+        MinSizeStoreSolver.h
         AlgorithmFactory.h
         BaseMinStoreSolver.h
         SortingMinStoreSolver.h
+        EverybodyHasStorageSolver.h
 )
 
 include_directories(${FORT_LIB_PATH})

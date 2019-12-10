@@ -2,12 +2,12 @@
 // Created by trojan52.
 //
 
-#include "StoreSolver.h"
+#include "MinSizeStoreSolver.h"
 #include "FordFulkersonSolver.h"
 
-std::pair<bool, int> CStoreSolver::SolveFlowTask(std::shared_ptr<CFlowNetwork> pNetwork, TaskData Data)
+std::pair<bool, int> CMinSizeStoreSolver::SolveFlowTask(std::shared_ptr<CFlowNetwork> pNetwork, TaskData Data)
 {
-    int nUBound = Data.nMaxFlow;
+    int nUBound = Data.nU;
     int nLBound = 0;
 
     while (nUBound > nLBound)
@@ -27,7 +27,7 @@ std::pair<bool, int> CStoreSolver::SolveFlowTask(std::shared_ptr<CFlowNetwork> p
 
 }
 
-bool CStoreSolver::SolveCapTask(std::shared_ptr<CFlowNetwork>& pNetwork, TaskData& rData, int nStoreCap)
+bool CMinSizeStoreSolver::SolveCapTask(std::shared_ptr<CFlowNetwork>& pNetwork, TaskData& rData, int nStoreCap)
 {
     pNetwork->SaveNodes();
 

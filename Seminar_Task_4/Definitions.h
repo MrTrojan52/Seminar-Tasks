@@ -27,7 +27,8 @@ enum etNodeType
 enum etAlgorithm
 {
     eFORDFULKERSON =0,
-    eSTORE,
+    eEVERYBODY,
+    eMINSIZESTORE,
     eBASEMINSTORE,
     eSORTINGMINSTORE
 };
@@ -48,6 +49,7 @@ struct TaskData
     int nConsumersCount;
     int nTactsCount;
     int nMaxFlow;
+    int nU;
 
     const std::vector<int>* m_vSuppliersTotalProduct;
     const Matrix* m_mSuppliersProductPerTact;
